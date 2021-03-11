@@ -59,6 +59,15 @@
     <ClInclude Include="Buffer.h">
       <Filter>Pipeline Related</Filter>
     </ClInclude>
+    <ClInclude Include="Light.h">
+      <Filter>Rendering Metadata Abstract</Filter>
+    </ClInclude>
+    <ClInclude Include="Material.h">
+      <Filter>Rendering Metadata Abstract</Filter>
+    </ClInclude>
+    <ClInclude Include="Geometry.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameApp.cpp">
@@ -99,15 +108,21 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Shaders\CubePS.hlsl">
+    <FxCompile Include="Shaders\PS.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="Shaders\CubeVS.hlsl">
+    <FxCompile Include="Shaders\VS.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Shaders\CubeTest.hlsli">
+    <None Include="Shaders\LightingUtil.hlsli">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\Vertex.hlsli">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\Buffer.hlsli">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

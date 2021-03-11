@@ -153,7 +153,7 @@ void D3DApp::OnResize()
 	depthStencilDesc.ArraySize = 1;
 	depthStencilDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
 
-	// 要使用 4X MSAA? --需要给交换链设置MASS参数
+	// 要使用 4X MSAA? --需要给交换链设置MSAA参数
 	if (m_Enable4xMsaa)
 	{
 		depthStencilDesc.SampleDesc.Count = 4;
@@ -197,21 +197,16 @@ void D3DApp::OnResize()
 
 }
 
-LRESULT D3DApp::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
-{
-	switch (msg)
-	{
+LRESULT D3DApp::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
+	switch (msg) {
 		// WM_ACTIVATE is sent when the window is activated or deactivated.  
 		// We pause the game when the window is deactivated and unpause it 
 		// when it becomes active.  
 	case WM_ACTIVATE:
-		if (LOWORD(wParam) == WA_INACTIVE)
-		{
+		if (LOWORD(wParam) == WA_INACTIVE) {
 			m_AppPaused = true;
 			m_Timer.Stop();
-		}
-		else
-		{
+		} else {
 			m_AppPaused = false;
 			m_Timer.Start();
 		}
@@ -222,41 +217,31 @@ LRESULT D3DApp::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		// Save the new client area dimensions.
 		m_ClientWidth = LOWORD(lParam);
 		m_ClientHeight = HIWORD(lParam);
-		if (m_pd3dDevice)
-		{
-			if (wParam == SIZE_MINIMIZED)
-			{
+		if (m_pd3dDevice) {
+			if (wParam == SIZE_MINIMIZED) {
 				m_AppPaused = true;
 				m_Minimized = true;
 				m_Maximized = false;
-			}
-			else if (wParam == SIZE_MAXIMIZED)
-			{
+			} else if (wParam == SIZE_MAXIMIZED) {
 				m_AppPaused = false;
 				m_Minimized = false;
 				m_Maximized = true;
 				OnResize();
-			}
-			else if (wParam == SIZE_RESTORED)
-			{
+			} else if (wParam == SIZE_RESTORED) {
 
 				// Restoring from minimized state?
-				if (m_Minimized)
-				{
+				if (m_Minimized) {
 					m_AppPaused = false;
 					m_Minimized = false;
 					OnResize();
 				}
 
 				// Restoring from maximized state?
-				else if (m_Maximized)
-				{
+				else if (m_Maximized) {
 					m_AppPaused = false;
 					m_Maximized = false;
 					OnResize();
-				}
-				else if (m_Resizing)
-				{
+				} else if (m_Resizing) {
 					// If user is dragging the resize bars, we do not resize 
 					// the buffers here because as the user continuously 
 					// drags the resize bars, a stream of WM_SIZE messages are
@@ -265,8 +250,7 @@ LRESULT D3DApp::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 					// the resize bars.  So instead, we reset after the user is 
 					// done resizing the window and releases the resize bars, which 
 					// sends a WM_EXITSIZEMOVE message.
-				}
-				else // API call such as SetWindowPos or m_pSwapChain->SetFullscreenState.
+				} else // API call such as SetWindowPos or m_pSwapChain->SetFullscreenState.
 				{
 					OnResize();
 				}
@@ -307,15 +291,35 @@ LRESULT D3DApp::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		((MINMAXINFO*)lParam)->ptMinTrackSize.y = 200;
 		return 0;
 
+		// 监测这些键盘/鼠标事件
+	case WM_INPUT:
+
 	case WM_LBUTTONDOWN:
 	case WM_MBUTTONDOWN:
 	case WM_RBUTTONDOWN:
-		return 0;
+	case WM_XBUTTONDOWN:
+
 	case WM_LBUTTONUP:
 	case WM_MBUTTONUP:
 	case WM_RBUTTONUP:
-		return 0;
+	case WM_XBUTTONUP:
+
+	case WM_MOUSEWHEEL:
+	case WM_MOUSEHOVER:
 	case WM_MOUSEMOVE:
+		m_pMouse->ProcessMessage(msg, wParam, lParam);
+		return 0;
+
+	case WM_KEYDOWN:
+	case WM_SYSKEYDOWN:
+	case WM_KEYUP:
+	case WM_SYSKEYUP:
+		m_pKeyboard->ProcessMessage(msg, wParam, lParam);
+		return 0;
+
+	case WM_ACTIVATEAPP:
+		m_pMouse->ProcessMessage(msg, wParam, lParam);
+		m_pKeyboard->ProcessMessage(msg, wParam, lParam);
 		return 0;
 	}
 
