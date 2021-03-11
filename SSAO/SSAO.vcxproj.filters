@@ -39,6 +39,15 @@
     <ClInclude Include="GameApp.h">
       <Filter>Core</Filter>
     </ClInclude>
+    <ClInclude Include="DDSTextureLoader11.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="ScreenGrab11.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="WICTextureLoader11.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameApp.cpp">
@@ -64,6 +73,15 @@
     </ClCompile>
     <ClCompile Include="d3dApp.cpp">
       <Filter>Basic</Filter>
+    </ClCompile>
+    <ClCompile Include="DDSTextureLoader11.cpp">
+      <Filter>Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="ScreenGrab11.cpp">
+      <Filter>Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="WICTextureLoader11.cpp">
+      <Filter>Utilities</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
