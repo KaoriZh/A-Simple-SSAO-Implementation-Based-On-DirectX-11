@@ -56,6 +56,9 @@
     <ClInclude Include="VertexStruct.h">
       <Filter>Pipeline Related</Filter>
     </ClInclude>
+    <ClInclude Include="Buffer.h">
+      <Filter>Pipeline Related</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameApp.cpp">
@@ -96,15 +99,15 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Shaders\TrianglePS.hlsl">
+    <FxCompile Include="Shaders\CubePS.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="Shaders\TriangleVS.hlsl">
+    <FxCompile Include="Shaders\CubeVS.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Shaders\TriangleTest.hlsli">
+    <None Include="Shaders\CubeTest.hlsli">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>
