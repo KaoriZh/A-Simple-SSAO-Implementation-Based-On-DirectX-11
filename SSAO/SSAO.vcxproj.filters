@@ -53,6 +53,9 @@
     <ClInclude Include="WICTextureLoader11.h">
       <Filter>Utilities</Filter>
     </ClInclude>
+    <ClInclude Include="VertexStruct.h">
+      <Filter>Pipeline Related</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameApp.cpp">
@@ -88,5 +91,21 @@
     <ClCompile Include="WICTextureLoader11.cpp">
       <Filter>Utilities</Filter>
     </ClCompile>
+    <ClCompile Include="VertexStruct.cpp">
+      <Filter>Pipeline Related</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Shaders\TrianglePS.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Shaders\TriangleVS.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Shaders\TriangleTest.hlsli">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>
