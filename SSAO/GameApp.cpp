@@ -1,3 +1,5 @@
+// Impl
+
 #include "GameApp.h"
 #include "d3dUtil.h"
 #include "DXTrace.h"
@@ -15,6 +17,10 @@ bool GameApp::Init()
 {
 	if (!D3DApp::Init())
 		return false;
+
+	// 初始化鼠标，键盘不需要
+	m_pMouse->SetWindow(m_hMainWnd);
+	m_pMouse->SetMode(DirectX::Mouse::MODE_RELATIVE);
 
 	return true;
 }

@@ -148,6 +148,8 @@
     <ClInclude Include="DXTrace.h" />
     <ClInclude Include="GameApp.h" />
     <ClInclude Include="GameTimer.h" />
+    <ClInclude Include="Keyboard.h" />
+    <ClInclude Include="Mouse.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="d3dApp.cpp" />
@@ -155,7 +157,9 @@
     <ClCompile Include="DXTrace.cpp" />
     <ClCompile Include="GameApp.cpp" />
     <ClCompile Include="GameTimer.cpp" />
+    <ClCompile Include="Keyboard.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="Mouse.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
