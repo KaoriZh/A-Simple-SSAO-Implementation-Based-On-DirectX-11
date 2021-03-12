@@ -13,7 +13,8 @@ GameApp::GameApp(HINSTANCE hInstance)
 	m_DirLight(),
 	m_PointLight(),
 	m_SpotLight(),
-	m_IsWireframeMode(false)
+	m_IsWireframeMode(false),
+	m_Importer()
 {
 }
 

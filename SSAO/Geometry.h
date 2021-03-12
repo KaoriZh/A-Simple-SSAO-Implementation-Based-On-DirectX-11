@@ -13,7 +13,7 @@
 #include <string>
 #include <map>
 #include <functional>
-#include "VertexStruct.h"
+#include "Vertex.h"
 
 namespace Geometry
 {

@@ -3,11 +3,12 @@
 #ifndef GAMEAPP_H
 #define GAMEAPP_H
 #include "d3dApp.h"
-#include "VertexStruct.h"
+#include "Vertex.h"
 #include "Buffer.h"
 #include "Light.h"
 #include "Material.h"
 #include "Geometry.h"
+#include "ModelImporter.h"
 
 class GameApp : public D3DApp
 {
@@ -26,11 +27,11 @@ private:
 	bool ResetMesh(const Geometry::MeshData<VertexPosNormalColor>& meshData);
 
 private:
-	ComPtr<ID3D11InputLayout> m_pVertexLayout;	// 顶点输入布局
-	ComPtr<ID3D11Buffer> m_pVertexBuffer;		// 顶点缓冲区
-	ComPtr<ID3D11Buffer> m_pIndexBuffer;    	// 索引缓冲区
-	ComPtr<ID3D11VertexShader> m_pVertexShader;	// 顶点着色器
-	ComPtr<ID3D11PixelShader> m_pPixelShader;	// 像素着色器
+	ComPtr<ID3D11InputLayout> m_pVertexLayout;    	// 顶点输入布局
+	ComPtr<ID3D11Buffer> m_pVertexBuffer;		    // 顶点缓冲区
+	ComPtr<ID3D11Buffer> m_pIndexBuffer;        	// 索引缓冲区
+	ComPtr<ID3D11VertexShader> m_pVertexShader;	    // 顶点着色器
+	ComPtr<ID3D11PixelShader> m_pPixelShader;	    // 像素着色器
 
 	VSConstantBuffer m_VSConstantBuffer;			// 用于修改用于VS的GPU常量缓冲区的变量
 	PSConstantBuffer m_PSConstantBuffer;			// 用于修改用于PS的GPU常量缓冲区的变量
@@ -43,6 +44,8 @@ private:
 
 	ComPtr<ID3D11RasterizerState> m_pRSWireframe;	// 光栅化状态: 线框模式
 	bool m_IsWireframeMode;							// 当前是否为线框模式
+
+	ModelImporter m_Importer;                       // 模型导入器
 };
 
 #endif
