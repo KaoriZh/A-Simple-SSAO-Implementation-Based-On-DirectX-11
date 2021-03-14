@@ -16,12 +16,13 @@ public:
 	~ModelImporter() {}
 
 
-	// 根据path导入模型，若导入成功则返回true，以及整个模型的场景指针scene
+	// 根据path导入模型，若导入成功则返回true，以及模型model
 	bool Import(const std::string& path, Model& model);
 
 private:
 	void LoadMesh(const aiScene* scene, const aiNode* node, Model& model);
 	void LoadMesh(const aiMesh* mesh, Model& model);
+	void LoadTexture(const aiScene* scene, Model& model);
 
 private:
 	Assimp::Importer importer;

@@ -74,13 +74,16 @@
     <ClInclude Include="Model.h">
       <Filter>Pipeline Related</Filter>
     </ClInclude>
+    <ClInclude Include="ConstantBuffer.h">
+      <Filter>Pipeline Related</Filter>
+    </ClInclude>
     <ClInclude Include="VertexBuffer.h">
       <Filter>Pipeline Related</Filter>
     </ClInclude>
     <ClInclude Include="IndexBuffer.h">
       <Filter>Pipeline Related</Filter>
     </ClInclude>
-    <ClInclude Include="ConstantBuffer.h">
+    <ClInclude Include="Camera.h">
       <Filter>Pipeline Related</Filter>
     </ClInclude>
   </ItemGroup>
@@ -118,22 +121,22 @@
     <ClCompile Include="WICTextureLoader11.cpp">
       <Filter>Utilities</Filter>
     </ClCompile>
-    <ClCompile Include="Vertex.cpp">
-      <Filter>Pipeline Related</Filter>
-    </ClCompile>
     <ClCompile Include="ModelImporter.cpp">
       <Filter>Utilities</Filter>
     </ClCompile>
     <ClCompile Include="Model.cpp">
       <Filter>Pipeline Related</Filter>
     </ClCompile>
-    <ClCompile Include="VertexBuffer.cpp">
-      <Filter>Pipeline Related</Filter>
-    </ClCompile>
-    <ClCompile Include="IndexBuffer.cpp">
-      <Filter>Pipeline Related</Filter>
-    </ClCompile>
     <ClCompile Include="ConstantBuffer.cpp">
+      <Filter>Pipeline Related</Filter>
+    </ClCompile>
+    <ClCompile Include="Vertex.cpp">
+      <Filter>Pipeline Related</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh.cpp">
+      <Filter>Pipeline Related</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
       <Filter>Pipeline Related</Filter>
     </ClCompile>
   </ItemGroup>

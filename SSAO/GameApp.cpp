@@ -6,8 +6,8 @@
 using namespace DirectX;
 
 GameApp::GameApp(HINSTANCE hInstance)
-	: D3DApp(hInstance),
-	m_IndexCount(),
+	: D3DApp(hInstance), 
+	m_pVertexLayout(),
 	m_VSConstantBuffer(),
 	m_PSConstantBuffer(),
 	m_DirLight(),
@@ -31,9 +31,6 @@ bool GameApp::Init()
 	m_pMouse->SetWindow(m_hMainWnd);
 	m_pMouse->SetMode(DirectX::Mouse::MODE_ABSOLUTE);
 
-	if (!InitEffect())
-		return false;
-
 	if (!InitResource())
 		return false;
 
@@ -47,6 +44,12 @@ void GameApp::OnResize()
 
 void GameApp::UpdateScene(float dt)
 {
+	UpdateMouse(dt);
+	UpdateKeyboard(dt);
+	UpdateConstantBuffer();
+}
+
+void GameApp::UpdateMouse(float dt) {
 	static float cubePhi = 0.0f, cubeTheta = 0.0f;
 	Mouse::State mouseState = m_pMouse->GetState();
 	Mouse::State lastMouseState = m_MouseTracker.GetLastState();
@@ -58,7 +61,9 @@ void GameApp::UpdateScene(float dt)
 	XMMATRIX W = XMMatrixRotationY(cubeTheta) * XMMatrixRotationX(cubePhi);
 	m_VSConstantBuffer.world = XMMatrixTranspose(W);
 	m_VSConstantBuffer.worldInvTranspose = XMMatrixTranspose(InverseTranspose(W));
+}
 
+void GameApp::UpdateKeyboard(float dt) {
 	// 键盘切换灯光类型
 	Keyboard::State state = m_pKeyboard->GetState();
 	m_KeyboardTracker.Update(state);
@@ -79,8 +84,10 @@ void GameApp::UpdateScene(float dt)
 		m_IsWireframeMode = !m_IsWireframeMode;
 		m_pd3dImmediateContext->RSSetState(m_IsWireframeMode ? m_pRSWireframe.Get() : nullptr);
 	}
+}
 
-	// 更新常量缓冲区，让立方体转起来
+void GameApp::UpdateConstantBuffer() {
+	// 更新常量缓冲区
 	D3D11_MAPPED_SUBRESOURCE mappedData;
 	HR(m_pd3dImmediateContext->Map(m_pConstantBuffers[0].Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedData));
 	memcpy_s(mappedData.pData, sizeof(VSConstantBuffer), &m_VSConstantBuffer, sizeof(VSConstantBuffer));
@@ -96,13 +103,37 @@ void GameApp::DrawScene()
 	assert(m_pd3dImmediateContext);
 	assert(m_pSwapChain);
 
-	m_pd3dImmediateContext->ClearRenderTargetView(m_pRenderTargetView.Get(), reinterpret_cast<const float*>(&Colors::Black));
+	m_pd3dImmediateContext->ClearRenderTargetView(m_pRenderTargetView.Get(), reinterpret_cast<const float*>(&Colors::DimGray));
 	m_pd3dImmediateContext->ClearDepthStencilView(m_pDepthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
-	// 绘制几何模型
-	m_pd3dImmediateContext->DrawIndexed(m_IndexCount, 0, 0);
+	for (size_t i = 0; i < m_VertexBuffers.size(); ++i) {
+		UINT stride = (UINT)sizeof(Vertex);
+		UINT offset = 0;
+		m_pd3dImmediateContext->IASetVertexBuffers(0, 1, m_VertexBuffers[i].GetAddressOf(), &stride, &offset);
+		m_pd3dImmediateContext->IASetIndexBuffer(m_IndexBuffers[i].Get(), DXGI_FORMAT::DXGI_FORMAT_R32_UINT, 0);
+		m_pd3dImmediateContext->DrawIndexed(m_IndexCounts[i], 0, 0);
+	}
 
 	HR(m_pSwapChain->Present(0, 0));
+}
+
+bool GameApp::InitResource() {
+
+	if (!InitEffect()) return false;
+	if (!InitModel()) return false;
+	InitConstantBuffer();
+	InitRasterizationState();
+	InitBindAndSet();
+	// ******************
+	// 设置调试对象名
+	//
+	D3D11SetDebugObjectName(m_pVertexLayout.Get(), "VertexPosNormalTexLayout");
+	D3D11SetDebugObjectName(m_pConstantBuffers[0].Get(), "VSConstantBuffer");
+	D3D11SetDebugObjectName(m_pConstantBuffers[1].Get(), "PSConstantBuffer");
+	D3D11SetDebugObjectName(m_pVertexShader.Get(), "VS");
+	D3D11SetDebugObjectName(m_pPixelShader.Get(), "PS");
+
+	return true;
 }
 
 bool GameApp::InitEffect() {
@@ -122,14 +153,53 @@ bool GameApp::InitEffect() {
 	return true;
 }
 
-bool GameApp::InitResource() {
-	// ******************
-	// 初始化网格模型
-	//
-	auto meshData = Geometry::CreateBox<VertexPosNormalColor>();
-	ResetMesh(meshData);
+bool GameApp::InitModel() {
 
+	ModelImporter importer;
+	if (!importer.Import("Models\\tower.obj", model)) return false;
 
+	// 释放旧资源
+	m_VertexBuffers.clear();
+	m_IndexBuffers.clear();
+
+	// 设置顶点缓冲区描述
+	D3D11_BUFFER_DESC vbd;
+	ZeroMemory(&vbd, sizeof(vbd));
+	vbd.Usage = D3D11_USAGE_IMMUTABLE;
+	vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	vbd.CPUAccessFlags = 0;
+	// 初始化子资源数据
+	D3D11_SUBRESOURCE_DATA InitData;
+	ZeroMemory(&InitData, sizeof(InitData));
+
+	// 设置索引缓冲区描述
+	D3D11_BUFFER_DESC ibd;
+	ZeroMemory(&ibd, sizeof(ibd));
+	ibd.Usage = D3D11_USAGE_IMMUTABLE;
+	ibd.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	ibd.CPUAccessFlags = 0;
+	
+	for (auto& mesh : model.meshes) {
+		// 新建顶点缓冲区
+		vbd.ByteWidth = (UINT)mesh.vertices.size() * sizeof(Vertex);
+		InitData.pSysMem = mesh.vertices.data();
+		ComPtr<ID3D11Buffer> vertexBuffer;
+		HR(m_pd3dDevice->CreateBuffer(&vbd, &InitData, vertexBuffer.GetAddressOf()));
+		m_VertexBuffers.emplace_back(vertexBuffer);
+
+		// 新建索引缓冲区
+		ibd.ByteWidth = (UINT)mesh.indices.size() * sizeof(DWORD);
+		InitData.pSysMem = mesh.indices.data();
+		ComPtr<ID3D11Buffer> indexBuffer;
+		HR(m_pd3dDevice->CreateBuffer(&ibd, &InitData, indexBuffer.GetAddressOf()));
+		m_IndexBuffers.emplace_back(indexBuffer);
+
+		m_IndexCounts.emplace_back((UINT)mesh.indices.size());
+	}
+	return true;
+}
+
+bool GameApp::InitConstantBuffer() {
 	// ******************
 	// 设置常量缓冲区描述
 	//
@@ -191,10 +261,10 @@ bool GameApp::InitResource() {
 	HR(m_pd3dImmediateContext->Map(m_pConstantBuffers[1].Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedData));
 	memcpy_s(mappedData.pData, sizeof(PSConstantBuffer), &m_PSConstantBuffer, sizeof(PSConstantBuffer));
 	m_pd3dImmediateContext->Unmap(m_pConstantBuffers[1].Get(), 0);
+	return true;
+}
 
-	// ******************
-	// 初始化光栅化状态
-	//
+bool GameApp::InitRasterizationState() {
 	D3D11_RASTERIZER_DESC rasterizerDesc;
 	ZeroMemory(&rasterizerDesc, sizeof(rasterizerDesc));
 	rasterizerDesc.FillMode = D3D11_FILL_WIREFRAME;
@@ -202,11 +272,10 @@ bool GameApp::InitResource() {
 	rasterizerDesc.FrontCounterClockwise = false;
 	rasterizerDesc.DepthClipEnable = true;
 	HR(m_pd3dDevice->CreateRasterizerState(&rasterizerDesc, m_pRSWireframe.GetAddressOf()));
+	return true;
+}
 
-	// ******************
-	// 给渲染管线各个阶段绑定好所需资源
-	//
-
+bool GameApp::InitBindAndSet() {
 	// 设置图元类型，设定输入布局
 	m_pd3dImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	m_pd3dImmediateContext->IASetInputLayout(m_pVertexLayout.Get());
@@ -217,64 +286,5 @@ bool GameApp::InitResource() {
 	// PS常量缓冲区对应HLSL寄存于b1的常量缓冲区
 	m_pd3dImmediateContext->PSSetConstantBuffers(1, 1, m_pConstantBuffers[1].GetAddressOf());
 	m_pd3dImmediateContext->PSSetShader(m_pPixelShader.Get(), nullptr, 0);
-
-	// ******************
-	// 设置调试对象名
-	//
-	D3D11SetDebugObjectName(m_pVertexLayout.Get(), "VertexPosNormalTexLayout");
-	D3D11SetDebugObjectName(m_pConstantBuffers[0].Get(), "VSConstantBuffer");
-	D3D11SetDebugObjectName(m_pConstantBuffers[1].Get(), "PSConstantBuffer");
-	D3D11SetDebugObjectName(m_pVertexShader.Get(), "VS");
-	D3D11SetDebugObjectName(m_pPixelShader.Get(), "PS");
-
-	return true;
-}
-
-bool GameApp::ResetMesh(const Geometry::MeshData<VertexPosNormalColor>& meshData) {
-	// 释放旧资源
-	m_pVertexBuffer.Reset();
-	m_pIndexBuffer.Reset();
-
-	// 设置顶点缓冲区描述
-	D3D11_BUFFER_DESC vbd;
-	ZeroMemory(&vbd, sizeof(vbd));
-	vbd.Usage = D3D11_USAGE_IMMUTABLE;
-	vbd.ByteWidth = (UINT)meshData.vertexVec.size() * sizeof(VertexPosNormalColor);
-	vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	vbd.CPUAccessFlags = 0;
-	// 新建顶点缓冲区
-	D3D11_SUBRESOURCE_DATA InitData;
-	ZeroMemory(&InitData, sizeof(InitData));
-	InitData.pSysMem = meshData.vertexVec.data();
-	HR(m_pd3dDevice->CreateBuffer(&vbd, &InitData, m_pVertexBuffer.GetAddressOf()));
-
-	// 输入装配阶段的顶点缓冲区设置
-	UINT stride = sizeof(VertexPosNormalColor);	// 跨越字节数
-	UINT offset = 0;							// 起始偏移量
-
-	m_pd3dImmediateContext->IASetVertexBuffers(0, 1, m_pVertexBuffer.GetAddressOf(), &stride, &offset);
-
-
-
-	// 设置索引缓冲区描述
-	m_IndexCount = (UINT)meshData.indexVec.size();
-	D3D11_BUFFER_DESC ibd;
-	ZeroMemory(&ibd, sizeof(ibd));
-	ibd.Usage = D3D11_USAGE_IMMUTABLE;
-	ibd.ByteWidth = m_IndexCount * sizeof(DWORD);
-	ibd.BindFlags = D3D11_BIND_INDEX_BUFFER;
-	ibd.CPUAccessFlags = 0;
-	// 新建索引缓冲区
-	InitData.pSysMem = meshData.indexVec.data();
-	HR(m_pd3dDevice->CreateBuffer(&ibd, &InitData, m_pIndexBuffer.GetAddressOf()));
-	// 输入装配阶段的索引缓冲区设置
-	m_pd3dImmediateContext->IASetIndexBuffer(m_pIndexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
-
-
-
-	// 设置调试对象名
-	D3D11SetDebugObjectName(m_pVertexBuffer.Get(), "VertexBuffer");
-	D3D11SetDebugObjectName(m_pIndexBuffer.Get(), "IndexBuffer");
-
 	return true;
 }

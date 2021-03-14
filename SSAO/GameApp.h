@@ -22,21 +22,27 @@ public:
 	void DrawScene();
 
 private:
-	bool InitEffect();
 	bool InitResource();
-	bool ResetMesh(const Geometry::MeshData<VertexPosNormalColor>& meshData);
+	bool InitEffect();
+	bool InitModel();
+	bool InitConstantBuffer();
+	bool InitRasterizationState();
+	bool InitBindAndSet();
+	void UpdateMouse(float dt);
+	void UpdateKeyboard(float dt);
+	void UpdateConstantBuffer();
 
 private:
 	ComPtr<ID3D11InputLayout> m_pVertexLayout;    	// 顶点输入布局
-	ComPtr<ID3D11Buffer> m_pVertexBuffer;		    // 顶点缓冲区
-	ComPtr<ID3D11Buffer> m_pIndexBuffer;        	// 索引缓冲区
+	std::vector<ComPtr<ID3D11Buffer>> m_VertexBuffers;		    // 顶点缓冲区
+	std::vector<ComPtr<ID3D11Buffer>> m_IndexBuffers;       	// 索引缓冲区
+	std::vector<UINT> m_IndexCounts;				// 索引数量
 	ComPtr<ID3D11VertexShader> m_pVertexShader;	    // 顶点着色器
 	ComPtr<ID3D11PixelShader> m_pPixelShader;	    // 像素着色器
 
 	VSConstantBuffer m_VSConstantBuffer;			// 用于修改用于VS的GPU常量缓冲区的变量
 	PSConstantBuffer m_PSConstantBuffer;			// 用于修改用于PS的GPU常量缓冲区的变量
 	ComPtr<ID3D11Buffer> m_pConstantBuffers[2];	    // 常量缓冲区
-	UINT m_IndexCount;							    // 绘制物体的索引数组大小
 
 	DirectionalLight m_DirLight;					// 默认环境光
 	PointLight m_PointLight;						// 默认点光
@@ -46,6 +52,7 @@ private:
 	bool m_IsWireframeMode;							// 当前是否为线框模式
 
 	ModelImporter m_Importer;                       // 模型导入器
+	Model model;
 };
 
 #endif
