@@ -11,9 +11,12 @@
 #include <string>
 #include <d3d11_1.h>
 #include <DirectXMath.h>
+#include "ProjectSetting.h"
 #include "GameTimer.h"
 #include "Keyboard.h"
 #include "Mouse.h"
+
+using namespace ProjectSetting;
 
 // 添加所有要引用的库
 #pragma comment(lib, "d3d11.lib")

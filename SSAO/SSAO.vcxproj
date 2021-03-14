@@ -173,6 +173,7 @@
     <ClInclude Include="Model.h" />
     <ClInclude Include="ModelImporter.h" />
     <ClInclude Include="Mouse.h" />
+    <ClInclude Include="ProjectSetting.h" />
     <ClInclude Include="ScreenGrab11.h" />
     <ClInclude Include="Vertex.h" />
     <ClInclude Include="VertexBuffer.h" />

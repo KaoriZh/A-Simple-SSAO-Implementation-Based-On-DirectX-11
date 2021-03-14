@@ -201,4 +201,12 @@ inline DirectX::XMMATRIX XM_CALLCONV InverseTranspose(DirectX::FXMMATRIX M) {
 	return XMMatrixTranspose(XMMatrixInverse(nullptr, A));
 }
 
+inline DirectX::XMVECTOR SphericalToCartesian(float radius, float theta, float phi) {
+	return DirectX::XMVectorSet(
+		radius * sinf(phi) * cosf(theta),
+		radius * cosf(phi),
+		radius * sinf(phi) * sinf(theta),
+		1.0f);
+}
+
 #endif

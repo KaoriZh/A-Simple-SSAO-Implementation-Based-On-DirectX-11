@@ -31,6 +31,7 @@ private:
 	void UpdateMouse(float dt);
 	void UpdateKeyboard(float dt);
 	void UpdateConstantBuffer();
+	void ResetCameraState();
 
 private:
 	ComPtr<ID3D11InputLayout> m_pVertexLayout;    	// 顶点输入布局
@@ -53,6 +54,19 @@ private:
 
 	ModelImporter m_Importer;                       // 模型导入器
 	Model model;
+
+	float mMouseSpeed = 5.0f;
+
+	// 相机在世界空间下的坐标
+	// 从子类迁移到基类，方便调整视角
+	// 球坐标系参数，基于被观察点
+	float mTheta;
+	float mPhi;
+	float mRadius;
+	// 直角坐标系坐标
+	XMVECTOR mCameraPos;
+	// 被观察点，默认为世界空间原点
+	XMVECTOR mTargetPos;
 };
 
 #endif

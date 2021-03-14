@@ -21,15 +21,15 @@ MainWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 D3DApp::D3DApp(HINSTANCE hInstance)
 	: m_hAppInst(hInstance),
-	m_MainWndCaption(L"DirectX11 Initialization"),
-	m_ClientWidth(800),
-	m_ClientHeight(600),
+	m_MainWndCaption(WindowName),
+	m_ClientWidth(WindowWidth),
+	m_ClientHeight(WindowHeight),
 	m_hMainWnd(nullptr),
 	m_AppPaused(false),
 	m_Minimized(false),
 	m_Maximized(false),
 	m_Resizing(false),
-	m_Enable4xMsaa(true),
+	m_Enable4xMsaa(IsEnableMSAA),
 	m_4xMsaaQuality(0),
 	m_pd3dDevice(nullptr),
 	m_pd3dImmediateContext(nullptr),
@@ -474,8 +474,8 @@ bool D3DApp::InitDirect3D()
 		sd.Flags = 0;
 
 		DXGI_SWAP_CHAIN_FULLSCREEN_DESC fd;
-		fd.RefreshRate.Numerator = 60;
-		fd.RefreshRate.Denominator = 1;
+		fd.RefreshRate.Numerator = RefreshRateNumerator;
+		fd.RefreshRate.Denominator = RefreshRateDenominator;
 		fd.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
 		fd.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
 		fd.Windowed = TRUE;
@@ -490,8 +490,8 @@ bool D3DApp::InitDirect3D()
 		ZeroMemory(&sd, sizeof(sd));
 		sd.BufferDesc.Width = m_ClientWidth;
 		sd.BufferDesc.Height = m_ClientHeight;
-		sd.BufferDesc.RefreshRate.Numerator = 60;
-		sd.BufferDesc.RefreshRate.Denominator = 1;
+		sd.BufferDesc.RefreshRate.Numerator = RefreshRateNumerator;
+		sd.BufferDesc.RefreshRate.Denominator = RefreshRateDenominator;
 		sd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 		sd.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
 		sd.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;

@@ -86,6 +86,9 @@
     <ClInclude Include="Camera.h">
       <Filter>Pipeline Related</Filter>
     </ClInclude>
+    <ClInclude Include="ProjectSetting.h">
+      <Filter>Core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameApp.cpp">
