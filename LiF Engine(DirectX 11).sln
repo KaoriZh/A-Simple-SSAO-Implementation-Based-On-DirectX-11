@@ -5,6 +5,8 @@ VisualStudioVersion = 16.0.31005.135
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SSAO", "SSAO\SSAO.vcxproj", "{83A775EC-BAC6-4CDE-A3F7-BA62A2E0C78E}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Engine Project", "Engine Project\Engine Project.vcxproj", "{ACA75A09-A505-41D5-A29F-D4DB436AB572}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -21,6 +23,14 @@ Global
 		{83A775EC-BAC6-4CDE-A3F7-BA62A2E0C78E}.Release|x64.Build.0 = Release|x64
 		{83A775EC-BAC6-4CDE-A3F7-BA62A2E0C78E}.Release|x86.ActiveCfg = Release|Win32
 		{83A775EC-BAC6-4CDE-A3F7-BA62A2E0C78E}.Release|x86.Build.0 = Release|Win32
+		{ACA75A09-A505-41D5-A29F-D4DB436AB572}.Debug|x64.ActiveCfg = Debug|x64
+		{ACA75A09-A505-41D5-A29F-D4DB436AB572}.Debug|x64.Build.0 = Debug|x64
+		{ACA75A09-A505-41D5-A29F-D4DB436AB572}.Debug|x86.ActiveCfg = Debug|Win32
+		{ACA75A09-A505-41D5-A29F-D4DB436AB572}.Debug|x86.Build.0 = Debug|Win32
+		{ACA75A09-A505-41D5-A29F-D4DB436AB572}.Release|x64.ActiveCfg = Release|x64
+		{ACA75A09-A505-41D5-A29F-D4DB436AB572}.Release|x64.Build.0 = Release|x64
+		{ACA75A09-A505-41D5-A29F-D4DB436AB572}.Release|x86.ActiveCfg = Release|Win32
+		{ACA75A09-A505-41D5-A29F-D4DB436AB572}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
