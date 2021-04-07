@@ -1,0 +1,268 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Basic">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Pipeline">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Utilities">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{b6bab225-85eb-4195-a915-49d5d399c633}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Effects">
+      <UniqueIdentifier>{517564b6-3984-4179-a396-27cbfe3a547a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\Basic">
+      <UniqueIdentifier>{e27391a0-e796-4100-a877-5dd351aab7f9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\Debug">
+      <UniqueIdentifier>{ddc6aa2f-dd5c-464b-b2d3-cdb34ea06ad9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\Shadow">
+      <UniqueIdentifier>{e6e455b1-0fe5-4a6e-a7e4-b7c1a59112fb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\SSAO">
+      <UniqueIdentifier>{4ce74599-9e86-4ca8-9577-b0d335e4098a}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="BasicEffect.cpp">
+      <Filter>Effects</Filter>
+    </ClCompile>
+    <ClCompile Include="DebugEffect.cpp">
+      <Filter>Effects</Filter>
+    </ClCompile>
+    <ClCompile Include="EffectHelper.cpp">
+      <Filter>Effects</Filter>
+    </ClCompile>
+    <ClCompile Include="ShadowEffect.cpp">
+      <Filter>Effects</Filter>
+    </ClCompile>
+    <ClCompile Include="SSAOEffect.cpp">
+      <Filter>Effects</Filter>
+    </ClCompile>
+    <ClCompile Include="SSAORender.cpp">
+      <Filter>Effects</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureRender.cpp">
+      <Filter>Effects</Filter>
+    </ClCompile>
+    <ClCompile Include="GameApp.cpp">
+      <Filter>Basic</Filter>
+    </ClCompile>
+    <ClCompile Include="Main.cpp">
+      <Filter>Basic</Filter>
+    </ClCompile>
+    <ClCompile Include="d3dApp.cpp">
+      <Filter>Basic</Filter>
+    </ClCompile>
+    <ClCompile Include="Transform.cpp">
+      <Filter>Pipeline</Filter>
+    </ClCompile>
+    <ClCompile Include="Vertex.cpp">
+      <Filter>Pipeline</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>Pipeline</Filter>
+    </ClCompile>
+    <ClCompile Include="Collision.cpp">
+      <Filter>Pipeline</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject.cpp">
+      <Filter>Pipeline</Filter>
+    </ClCompile>
+    <ClCompile Include="Model.cpp">
+      <Filter>Pipeline</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderStates.cpp">
+      <Filter>Pipeline</Filter>
+    </ClCompile>
+    <ClCompile Include="WICTextureLoader.cpp">
+      <Filter>Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="d3dUtil.cpp">
+      <Filter>Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="DDSTextureLoader.cpp">
+      <Filter>Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="DXTrace.cpp">
+      <Filter>Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="GameTimer.cpp">
+      <Filter>Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="Keyboard.cpp">
+      <Filter>Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="Mouse.cpp">
+      <Filter>Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjReader.cpp">
+      <Filter>Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="ScreenGrab.cpp">
+      <Filter>Utilities</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="EffectHelper.h">
+      <Filter>Effects</Filter>
+    </ClInclude>
+    <ClInclude Include="Effects.h">
+      <Filter>Effects</Filter>
+    </ClInclude>
+    <ClInclude Include="SSAORender.h">
+      <Filter>Effects</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureRender.h">
+      <Filter>Effects</Filter>
+    </ClInclude>
+    <ClInclude Include="d3dApp.h">
+      <Filter>Basic</Filter>
+    </ClInclude>
+    <ClInclude Include="GameApp.h">
+      <Filter>Basic</Filter>
+    </ClInclude>
+    <ClInclude Include="Transform.h">
+      <Filter>Pipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="Vertex.h">
+      <Filter>Pipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Pipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="Collision.h">
+      <Filter>Pipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject.h">
+      <Filter>Pipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="LightHelper.h">
+      <Filter>Pipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="Model.h">
+      <Filter>Pipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderStates.h">
+      <Filter>Pipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="ScreenGrab.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="WICTextureLoader.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="d3dUtil.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="DDSTextureLoader.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="DXTrace.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="GameTimer.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Geometry.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Keyboard.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Mouse.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjReader.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="ProjectSetting.h">
+      <Filter>Basic</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="HLSL\Basic.hlsli">
+      <Filter>Shaders\Basic</Filter>
+    </None>
+    <None Include="HLSL\LightHelper.hlsli">
+      <Filter>Shaders\Basic</Filter>
+    </None>
+    <None Include="HLSL\DebugTexture.hlsli">
+      <Filter>Shaders\Debug</Filter>
+    </None>
+    <None Include="HLSL\SSAO_NormalDepth_PS.inc">
+      <Filter>Shaders\SSAO</Filter>
+    </None>
+    <None Include="HLSL\SSAO.hlsli">
+      <Filter>Shaders\SSAO</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="HLSL\Basic_PS.hlsl">
+      <Filter>Shaders\Basic</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\BasicInstance_VS.hlsl">
+      <Filter>Shaders\Basic</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\BasicObject_VS.hlsl">
+      <Filter>Shaders\Basic</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\NormalMap_PS.hlsl">
+      <Filter>Shaders\Basic</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\NormalMapInstance_VS.hlsl">
+      <Filter>Shaders\Basic</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\NormalMapObject_VS.hlsl">
+      <Filter>Shaders\Basic</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\DebugTextureOneComp_PS.hlsl">
+      <Filter>Shaders\Debug</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\DebugTextureOneCompGray_PS.hlsl">
+      <Filter>Shaders\Debug</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\DebugTexture_VS.hlsl">
+      <Filter>Shaders\Debug</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\ShadowObject_VS.hlsl">
+      <Filter>Shaders\Shadow</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\Shadow_PS.hlsl">
+      <Filter>Shaders\Shadow</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\ShadowInstance_VS.hlsl">
+      <Filter>Shaders\Shadow</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\SSAO_NormalDepth_Object_VS.hlsl">
+      <Filter>Shaders\SSAO</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\SSAO_NormalDepth_PS.hlsl">
+      <Filter>Shaders\SSAO</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\SSAO_PS.hlsl">
+      <Filter>Shaders\SSAO</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\SSAO_VS.hlsl">
+      <Filter>Shaders\SSAO</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\SSAO_Blur_PS.hlsl">
+      <Filter>Shaders\SSAO</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\SSAO_Blur_VS.hlsl">
+      <Filter>Shaders\SSAO</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\SSAO_NormalDepth_Instance_VS.hlsl">
+      <Filter>Shaders\SSAO</Filter>
+    </FxCompile>
+  </ItemGroup>
+</Project>
