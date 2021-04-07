@@ -18,6 +18,6 @@ namespace ProjectSetting {
 
 	const DirectX::XMVECTORF32 RenderTargetColor = DirectX::Colors::White;
 
-	const std::string ModelFilePath = "Models\\Eiffel_Tower.obj";
+	const std::string ModelFilePath = "Models\\house.obj";
 
 }
