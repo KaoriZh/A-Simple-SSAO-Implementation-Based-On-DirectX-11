@@ -15,6 +15,11 @@ Model::Model(ID3D11Device* device, const ObjReader& model)
 	SetModel(device, model);
 }
 
+Model::Model(ID3D11Device* device, const ModelImporter& importer)
+	: modelParts(), vertexStride() {
+	SetModel(device, importer);
+}
+
 Model::Model(ID3D11Device* device, const void* vertices, UINT vertexSize, UINT vertexCount,
 	const void* indices, UINT indexCount, DXGI_FORMAT indexFormat)
 	: modelParts(), boundingBox(), vertexStride()
@@ -94,6 +99,50 @@ void Model::SetModel(ID3D11Device* device, const ObjReader& model)
 	}
 
 
+}
+
+void Model::SetModel(ID3D11Device* device, const ModelImporter& importer) {
+
+	vertexStride = sizeof(VertexPosNormalTex);
+
+	modelParts.resize(importer.objParts.size());
+
+	// 创建包围盒
+	BoundingBox::CreateFromPoints(boundingBox, XMLoadFloat3(&importer.vMin), XMLoadFloat3(&importer.vMax));
+
+	for (size_t i = 0; i < importer.objParts.size(); ++i) {
+		auto part = importer.objParts[i];
+
+		modelParts[i].vertexCount = (UINT)part.vertices.size();
+		// 设置顶点缓冲区描述
+		D3D11_BUFFER_DESC vbd;
+		ZeroMemory(&vbd, sizeof(vbd));
+		vbd.Usage = D3D11_USAGE_IMMUTABLE;
+		vbd.ByteWidth = modelParts[i].vertexCount * (UINT)sizeof(VertexPosNormalTex);
+		vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+		vbd.CPUAccessFlags = 0;
+		// 新建顶点缓冲区
+		D3D11_SUBRESOURCE_DATA InitData;
+		ZeroMemory(&InitData, sizeof(InitData));
+		InitData.pSysMem = part.vertices.data();
+		HR(device->CreateBuffer(&vbd, &InitData, modelParts[i].vertexBuffer.ReleaseAndGetAddressOf()));
+
+		// 设置索引缓冲区描述
+		D3D11_BUFFER_DESC ibd;
+		ZeroMemory(&ibd, sizeof(ibd));
+		ibd.Usage = D3D11_USAGE_IMMUTABLE;
+		ibd.BindFlags = D3D11_BIND_INDEX_BUFFER;
+		ibd.CPUAccessFlags = 0;
+		modelParts[i].indexCount = (UINT)part.indices.size();
+		modelParts[i].indexFormat = DXGI_FORMAT_R32_UINT;
+		ibd.ByteWidth = modelParts[i].indexCount * (UINT)sizeof(DWORD);
+		InitData.pSysMem = part.indices.data();
+
+		// 新建索引缓冲区
+		HR(device->CreateBuffer(&ibd, &InitData, modelParts[i].indexBuffer.ReleaseAndGetAddressOf()));
+
+		modelParts[i].material = part.material;
+	}
 }
 
 void Model::SetMesh(ID3D11Device* device, const void* vertices, UINT vertexSize, UINT vertexCount, const void* indices, UINT indexCount, DXGI_FORMAT indexFormat)

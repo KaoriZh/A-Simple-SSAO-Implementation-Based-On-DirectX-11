@@ -5,10 +5,9 @@
 #include "Camera.h"
 #include "GameObject.h"
 #include "ObjReader.h"
-#include "Collision.h"
+#include "ModelImporter.h"
 #include "SSAORender.h"
 #include "TextureRender.h"
-#include "ProjectSetting.h"
 
 class GameApp : public D3DApp
 {
@@ -36,24 +35,14 @@ private:
 	ComPtr<IDWriteFont> m_pFont;								// 字体
 	ComPtr<IDWriteTextFormat> m_pTextFormat;					// 文本格式
 
-	bool m_EnableSSAO;											// 开启SSAO
-	bool m_EnableNormalMap;										// 开启法线贴图
 	bool m_EnableDebug;											// 开启调试模式
-	bool m_GrayMode;											// 深度值以灰度形式显示
+	bool m_EnableSSAO;											// 开启SSAO
+	bool m_EnableShadow;										// 阴影
 	size_t m_SlopeIndex;										// 斜率索引
 
 	GameObject m_Ground;										// 地面
-	GameObject m_GroundT;										// 带切线向量的地面
 
-	GameObject m_Cylinder;										// 圆柱体
-	GameObject m_CylinderT;										// 带切线向量的圆柱体
-	std::vector<Transform> m_CylinderTransforms;				// 圆柱体变换信息
-
-	GameObject m_Sphere;										// 球体
-	GameObject m_SphereT;										// 带切线向量的球体
-	std::vector<Transform> m_SphereTransforms;					// 球体变换信息
-
-	GameObject m_House;											// 房屋
+	GameObject m_Model;											// 主模型
 
 	GameObject m_DebugQuad;										// 调试用四边形
 
@@ -69,4 +58,6 @@ private:
 	std::unique_ptr<SSAORender> m_pSSAOMap;						// SSAO贴图
 
 	std::shared_ptr<Camera> m_pCamera;						    // 摄像机
+
+	ModelImporter m_Importer;					// 模型导入器
 };

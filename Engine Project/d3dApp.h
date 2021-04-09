@@ -3,6 +3,7 @@
 
 #include <wrl/client.h>
 #include <string>
+#include <sstream>
 #include <d2d1.h>
 #include <dwrite.h>
 #include <d3d11_1.h>
@@ -10,6 +11,7 @@
 #include "Mouse.h"
 #include "Keyboard.h"
 #include "GameTimer.h"
+#include "ProjectSetting.h"
 
 // 添加所有要引用的库
 #pragma comment(lib, "d2d1.lib")
@@ -90,6 +92,9 @@ protected:
 	std::wstring m_MainWndCaption;                               // 主窗口标题
 	int m_ClientWidth;                                           // 视口宽度
 	int m_ClientHeight;                                          // 视口高度
+
+	float m_Fps;
+	float m_Mspf;
 };
 
 #endif // D3DAPP_H

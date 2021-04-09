@@ -1,7 +1,6 @@
 #include "d3dApp.h"
 #include "d3dUtil.h"
 #include "DXTrace.h"
-#include <sstream>
 
 namespace
 {
@@ -21,9 +20,9 @@ MainWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 D3DApp::D3DApp(HINSTANCE hInstance)
 	: m_hAppInst(hInstance),
-	m_MainWndCaption(L"SSAO"),
-	m_ClientWidth(800),
-	m_ClientHeight(600),
+	m_MainWndCaption(WindowName),
+	m_ClientWidth(WindowWidth),
+	m_ClientHeight(WindowHeight),
 	m_hMainWnd(nullptr),
 	m_AppPaused(false),
 	m_Minimized(false),
@@ -574,16 +573,16 @@ void D3DApp::CalculateFrameStats()
 
 	if ((m_Timer.TotalTime() - timeElapsed) >= 1.0f)
 	{
-		float fps = (float)frameCnt; // fps = frameCnt / 1
-		float mspf = 1000.0f / fps;
-
+		m_Fps = (float)frameCnt; // fps = frameCnt / 1
+		m_Mspf = 1000.0f / m_Fps;
+		/*
 		std::wostringstream outs;
 		outs.precision(6);
 		outs << m_MainWndCaption << L"    "
-			<< L"FPS: " << fps << L"    "
-			<< L"Frame Time: " << mspf << L" (ms)";
+			<< L"FPS: " << m_Fps << L"    "
+			<< L"Frame Time: " << m_Mspf << L" (ms)";
 		SetWindowText(m_hMainWnd, outs.str().c_str());
-
+		*/
 		// Reset for next average.
 		frameCnt = 0;
 		timeElapsed += 1.0f;

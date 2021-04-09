@@ -12,6 +12,7 @@
 #include <DirectXCollision.h>
 #include "Effects.h"
 #include "ObjReader.h"
+#include "ModelImporter.h"
 #include "Geometry.h"
 
 struct ModelPart
@@ -48,6 +49,7 @@ struct Model
 	
 	Model();
 	Model(ID3D11Device * device, const ObjReader& model);
+	Model(ID3D11Device* device, const ModelImporter& importer);
 	// 设置缓冲区
 	template<class VertexType, class IndexType>
 	Model(ID3D11Device * device, const Geometry::MeshData<VertexType, IndexType>& meshData);
@@ -63,6 +65,7 @@ struct Model
 	//
 
 	void SetModel(ID3D11Device * device, const ObjReader& model);
+	void SetModel(ID3D11Device* device, const ModelImporter& importer);
 
 	//
 	// 设置网格

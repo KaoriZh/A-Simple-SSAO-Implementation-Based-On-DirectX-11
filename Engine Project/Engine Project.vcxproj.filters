@@ -111,6 +111,9 @@
     <ClCompile Include="ScreenGrab.cpp">
       <Filter>Utilities</Filter>
     </ClCompile>
+    <ClCompile Include="ModelImporter.cpp">
+      <Filter>Utilities</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EffectHelper.h">
@@ -187,6 +190,9 @@
     </ClInclude>
     <ClInclude Include="ProjectSetting.h">
       <Filter>Basic</Filter>
+    </ClInclude>
+    <ClInclude Include="ModelImporter.h">
+      <Filter>Utilities</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
