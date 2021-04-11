@@ -301,16 +301,19 @@ void GameApp::DrawScene()
 	//
 	if (m_pd2dRenderTarget != nullptr && m_EnableSceneInfo)
 	{
+		static std::wstring ON(L"ON"), OFF(L"OFF");
 		std::wostringstream outs;
 		outs.precision(6);
-		outs << L"Model: " << m_ModelFileNames[m_CurrentModelIndex].c_str() << L"\n"
-			<< L"Vertices: " << m_Models[m_CurrentModelIndex].GetModelVertexCount()
-			<< L"    Faces: " << m_Models[m_CurrentModelIndex].GetModelFaceCount() << L"\n"
-			<< L"FPS: " << m_Fps << L"\n"
-			<< L"Frame Time: " << m_Mspf << L" (ms)\n";
 
-		std::wstring text = outs.str();
-		std::wstring ON(L"ON"), OFF(L"OFF");
+		std::wstring text = L"Resolution: " + std::to_wstring(m_ClientWidth) + L" x " + std::to_wstring(m_ClientHeight) + L"\n";
+		text += L"FPS: " + std::to_wstring((int)m_Fps) + L"    " + 
+		        L"Frame Time: " + std::to_wstring(m_Mspf) + L" (ms)\n";
+
+		outs << L"Model: " << m_ModelFileNames[m_CurrentModelIndex].c_str() << L"\n"
+			<< L"Vertices: " << m_Models[m_CurrentModelIndex].GetModelVertexCount() << L"    "
+			<< L"Faces: " << m_Models[m_CurrentModelIndex].GetModelFaceCount() << L"\n";
+		text += outs.str();
+
 		text += L"Shadow: " + (m_EnableShadow ? ON : OFF) + L"\n";
 		text += L"SSAO: " + (m_EnableSSAO ? ON : OFF) + L"\n";
 		static std::wstring s;
