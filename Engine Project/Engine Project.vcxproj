@@ -36,7 +36,6 @@
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="Mouse.cpp" />
     <ClCompile Include="ModelImporter.cpp" />
-    <ClCompile Include="ObjReader.cpp" />
     <ClCompile Include="RenderStates.cpp" />
     <ClCompile Include="ScreenGrab.cpp" />
     <ClCompile Include="ShadowEffect.cpp" />
@@ -62,10 +61,10 @@
     <ClInclude Include="Geometry.h" />
     <ClInclude Include="Keyboard.h" />
     <ClInclude Include="LightHelper.h" />
+    <ClInclude Include="Mesh.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="Mouse.h" />
     <ClInclude Include="ModelImporter.h" />
-    <ClInclude Include="ObjReader.h" />
     <ClInclude Include="ProjectSetting.h" />
     <ClInclude Include="RenderStates.h" />
     <ClInclude Include="ScreenGrab.h" />

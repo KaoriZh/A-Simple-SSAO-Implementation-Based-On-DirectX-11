@@ -7,6 +7,7 @@
 #include <assimp/postprocess.h>
 #include "Vertex.h"
 #include "LightHelper.h"
+#include "ProjectSetting.h"
 
 class ModelImporter {
 public:
@@ -27,19 +28,18 @@ public:
 	ModelImporter& operator=(ModelImporter&&) = delete;
 	~ModelImporter() {}
 
-
-	// 根据path导入模型，若导入成功则返回true
-	bool Import(const std::string& path);
+	bool Import(const std::string& path, bool importAllInOnePart = false);
 
 public:
 	std::vector<ObjPart> objParts;
 	DirectX::XMFLOAT3 vMin, vMax;
 
 private:
-	void LoadMesh(const aiScene* scene, const aiNode* node);
+	void LoadMesh(const aiScene* scene);
 	void LoadMesh(const aiMesh* mesh);
-	void LoadTexture(const aiScene* scene);
+	void LoadDefaultTexture(const aiScene* scene);
 
 private:
 	Assimp::Importer importer;
+	bool m_ImportAllInOnePart = false;
 };

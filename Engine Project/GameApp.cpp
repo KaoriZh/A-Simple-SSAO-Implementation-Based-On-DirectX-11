@@ -9,10 +9,17 @@ GameApp::GameApp(HINSTANCE hInstance)
 	m_pShadowEffect(std::make_unique<ShadowEffect>()),
 	m_pDebugEffect(std::make_unique<DebugEffect>()),
 	m_pSSAOEffect(std::make_unique<SSAOEffect>()),
+	m_DirLight(),
+	m_OriginalLightDir(),
 	m_EnableSSAO(EnableSSAODefault),
 	m_EnableDebug(EnableDebugDefault),
 	m_EnableShadow(EnableShadowDefault),
-	m_SlopeIndex()
+	m_EnableSceneInfo(EnableSceneInfoDefault),
+	m_EnableLightRotation(EnableLightRotationDefault),
+	m_MouseModeRelative(true),
+	m_CurrentSSAOLevelIndex(1),
+	m_BlurCount(0),
+	m_CurrentModelIndex(0)
 {
 }
 
@@ -74,7 +81,7 @@ void GameApp::OnResize()
 		D2D1::ColorF(D2D1::ColorF::Black),
 		m_pColorBrush.GetAddressOf()));
 	HR(m_pdwriteFactory->CreateTextFormat(L"Consolas", nullptr, DWRITE_FONT_WEIGHT_NORMAL,
-		DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, 15, L"zh-cn",
+		DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, 14, L"zh-cn",
 		m_pTextFormat.GetAddressOf()));
 
 	// 摄像机变更显示
@@ -89,7 +96,7 @@ void GameApp::OnResize()
 	// SSAO图和调试用矩形重新设置
 	if (m_pSSAOMap)
 	{
-		m_pSSAOMap->OnResize(m_pd3dDevice.Get(), m_ClientWidth, m_ClientHeight, XM_PI / 3, FarZ);
+		m_pSSAOMap->OnResize(m_pd3dDevice.Get(), m_ClientWidth, m_ClientHeight, XM_PI / 3, FarZ, SSAOLevels[m_CurrentSSAOLevelIndex]);
 
 		Model quadModel;
 		quadModel.SetMesh(m_pd3dDevice.Get(), Geometry::Create2DShow<VertexPosNormalTex>(XMFLOAT2(0.5f, -0.5f), XMFLOAT2(0.5f, 0.5f)));
@@ -101,12 +108,6 @@ void GameApp::OnResize()
 
 void GameApp::UpdateScene(float dt)
 {
-
-	// 更新鼠标事件，获取相对偏移量
-	Mouse::State mouseState = m_pMouse->GetState();
-	Mouse::State lastMouseState = m_MouseTracker.GetLastState();
-	m_MouseTracker.Update(mouseState);
-
 	Keyboard::State keyState = m_pKeyboard->GetState();
 	m_KeyboardTracker.Update(keyState);
 
@@ -119,6 +120,7 @@ void GameApp::UpdateScene(float dt)
 	if (m_KeyboardTracker.IsKeyPressed(KeySSAO))
 	{
 		m_EnableSSAO = !m_EnableSSAO;
+		if (!m_EnableSSAO) m_EnableDebug = false;
 		m_pBasicEffect->SetSSAOEnabled(m_EnableSSAO);
 	}
 	// 阴影贴图开关
@@ -126,11 +128,42 @@ void GameApp::UpdateScene(float dt)
 		m_EnableShadow = !m_EnableShadow;
 		m_pBasicEffect->SetShadowEnabled(m_EnableShadow);
 	}
-		
+	// 切换模型
+	if (m_KeyboardTracker.IsKeyPressed(KeyModelSwitch)) {
+		m_CurrentModelIndex = (m_CurrentModelIndex + 1) % m_Models.size();
+	}
+	// 场景信息显示开关
+	if (m_KeyboardTracker.IsKeyPressed(KeySceneInfoSwitch))
+		m_EnableSceneInfo = !m_EnableSceneInfo;
+	// 旋转灯光
+	if (m_KeyboardTracker.IsKeyPressed(KeyLightRotationSwitch))
+		m_EnableLightRotation = !m_EnableLightRotation;
+	// 切换鼠标模式
+	if (m_KeyboardTracker.IsKeyPressed(KeyMouseModeSwitch))
+		m_MouseModeRelative = !m_MouseModeRelative;
+	if (m_MouseModeRelative) {
+		m_pMouse->SetMode(DirectX::Mouse::MODE_RELATIVE);
+	} else {
+		m_pMouse->SetMode(DirectX::Mouse::MODE_ABSOLUTE);
+	}
+	// SSAO分辨率等级
+	if (m_EnableSSAO && m_KeyboardTracker.IsKeyPressed(KeySSAOLevelSwitch)) {
+		m_CurrentSSAOLevelIndex = (m_CurrentSSAOLevelIndex + 1) % SSAOLevels.size();
+		m_pSSAOMap->OnResize(m_pd3dDevice.Get(), m_ClientWidth, m_ClientHeight, XM_PI / 3, FarZ, SSAOLevels[m_CurrentSSAOLevelIndex]);
+
+		Model quadModel;
+		quadModel.SetMesh(m_pd3dDevice.Get(), Geometry::Create2DShow<VertexPosNormalTex>(XMFLOAT2(0.5f, -0.5f), XMFLOAT2(0.5f, 0.5f)));
+		quadModel.modelParts[0].texDiffuse = m_pSSAOMap->GetAmbientTexture();
+		m_DebugQuad.SetModel(std::move(quadModel));
+	}
+	// 模糊次数
+	if (m_EnableSSAO && m_KeyboardTracker.IsKeyPressed(KeyBlurCountSwitch)) {
+		m_BlurCount = (m_BlurCount + 1) % MaxBlurCount;
+	}
+
 	// ******************
 	// 自由摄像机的操作
-	//
-
+	
 	// 方向移动
 	if (keyState.IsKeyDown(KeyUp))
 		cam1st->MoveForward(dt * CameraSpeed);
@@ -141,6 +174,11 @@ void GameApp::UpdateScene(float dt)
 	if (keyState.IsKeyDown(KeyRight))
 		cam1st->Strafe(dt * CameraSpeed);
 
+	// 更新鼠标事件，获取相对偏移量
+	Mouse::State mouseState = m_pMouse->GetState();
+	Mouse::State lastMouseState = m_MouseTracker.GetLastState();
+	m_MouseTracker.Update(mouseState);
+
 	// 在鼠标没进入窗口前仍为ABSOLUTE模式
 	if (mouseState.positionMode == Mouse::MODE_RELATIVE)
 	{
@@ -148,29 +186,28 @@ void GameApp::UpdateScene(float dt)
 		cam1st->RotateY(mouseState.x * dt * 1.25f);
 	}
 
+	m_pBasicEffect->SetTextureUsed(EnableTextureUsed);
 	m_pBasicEffect->SetViewMatrix(m_pCamera->GetViewXM());
 	// 为SSAO图设置观察矩阵
 	m_pSSAOEffect->SetViewMatrix(m_pCamera->GetViewXM());
 	m_pBasicEffect->SetEyePos(m_pCamera->GetPosition());
-
 	
 
 	// 更新光照
-	static float theta = 0;	
-	theta += dt * XM_2PI / 40.0f;
+	static float theta = 0;
+	if (m_EnableLightRotation)
+		theta += dt * XM_2PI / 40.0f;
+	
 
-	for (int i = 0; i < 3; ++i)
-	{
-		XMVECTOR dirVec = XMLoadFloat3(&m_OriginalLightDirs[i]);
-		dirVec = XMVector3Transform(dirVec, XMMatrixRotationY(theta));
-		XMStoreFloat3(&m_DirLights[i].direction, dirVec);
-		m_pBasicEffect->SetDirLight(i, m_DirLights[i]);
-	}
+	XMVECTOR dirVec = XMLoadFloat3(&m_OriginalLightDir);
+	dirVec = XMVector3Transform(dirVec, XMMatrixRotationY(theta));
+	XMStoreFloat3(&m_DirLight.direction, dirVec);
+	m_pBasicEffect->SetDirLight(0, m_DirLight);
 
 	//
 	// 投影区域为正方体，以原点为中心，以方向光为+Z朝向
 	//
-	XMVECTOR dirVec = XMLoadFloat3(&m_DirLights[0].direction);
+	dirVec = XMLoadFloat3(&m_DirLight.direction);
 	XMMATRIX LightView = XMMatrixLookAtLH(dirVec * 20.0f * (-2.0f), g_XMZero, g_XMIdentityR1);
 	m_pShadowEffect->SetViewMatrix(LightView);
 	
@@ -184,7 +221,7 @@ void GameApp::UpdateScene(float dt)
 	m_pBasicEffect->SetShadowTransformMatrix(LightView * XMMatrixOrthographicLH(40.0f, 40.0f, 20.0f, 60.0f) * T);
 
 	// 退出程序，这里应向窗口发送销毁信息
-	if (m_KeyboardTracker.IsKeyPressed(Keyboard::Escape))
+	if (m_KeyboardTracker.IsKeyPressed(KeyQuit))
 		SendMessage(MainWnd(), WM_DESTROY, 0, 0);
 }
 
@@ -193,7 +230,7 @@ void GameApp::DrawScene()
 	assert(m_pd3dImmediateContext);
 	assert(m_pSwapChain);
 
-	m_pd3dImmediateContext->ClearRenderTargetView(m_pRenderTargetView.Get(), reinterpret_cast<const float*>(&Colors::Silver));
+	m_pd3dImmediateContext->ClearRenderTargetView(m_pRenderTargetView.Get(), reinterpret_cast<const float*>(&Colors::White));
 	m_pd3dImmediateContext->ClearDepthStencilView(m_pDepthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 	
 	// ******************
@@ -204,13 +241,15 @@ void GameApp::DrawScene()
 		m_pSSAOMap->Begin(m_pd3dImmediateContext.Get(), m_pDepthStencilView.Get());
 		{
 			// 绘制场景到法向量/深度缓冲区
-			DrawScene(m_pSSAOEffect.get());
+			const auto& pSSAOEffect = m_pSSAOEffect.get();
+			pSSAOEffect->SetRenderNormalDepth(m_pd3dImmediateContext.Get(), IEffect::RenderObject);
+			m_Models[m_CurrentModelIndex].Draw(m_pd3dImmediateContext.Get(), pSSAOEffect);
 
 			// 计算环境光遮蔽值到SSAO图
 			m_pSSAOMap->ComputeSSAO(m_pd3dImmediateContext.Get(), *m_pSSAOEffect, *m_pCamera);
 
 			// 进行模糊
-			m_pSSAOMap->BlurAmbientMap(m_pd3dImmediateContext.Get(), *m_pSSAOEffect, 4);
+			m_pSSAOMap->BlurAmbientMap(m_pd3dImmediateContext.Get(), *m_pSSAOEffect, m_BlurCount);
 		}
 		m_pSSAOMap->End(m_pd3dImmediateContext.Get());
 	}
@@ -221,7 +260,9 @@ void GameApp::DrawScene()
 	if (m_EnableShadow) {
 		m_pShadowMap->Begin(m_pd3dImmediateContext.Get(), nullptr);
 		{
-			DrawScene(m_pShadowEffect.get());
+			const auto& pShadowEffect = m_pShadowEffect.get();
+			pShadowEffect->SetRenderDefault(m_pd3dImmediateContext.Get(), IEffect::RenderObject);
+			m_Models[m_CurrentModelIndex].Draw(m_pd3dImmediateContext.Get(), pShadowEffect);
 		}
 		m_pShadowMap->End(m_pd3dImmediateContext.Get());
 	}
@@ -231,7 +272,10 @@ void GameApp::DrawScene()
 	//
 	m_pBasicEffect->SetTextureShadowMap(m_pShadowMap->GetOutputTexture());
 	m_pBasicEffect->SetTextureSSAOMap(m_pSSAOMap->GetAmbientTexture());
-	DrawScene(m_pBasicEffect.get());
+
+	const auto& pBasicEffect = m_pBasicEffect.get();
+	pBasicEffect->SetRenderDefault(m_pd3dImmediateContext.Get(), IEffect::RenderObject);
+	m_Models[m_CurrentModelIndex].Draw(m_pd3dImmediateContext.Get(), pBasicEffect);
 
 	// 解除绑定
 	m_pBasicEffect->SetTextureShadowMap(nullptr);
@@ -255,50 +299,36 @@ void GameApp::DrawScene()
 	// ******************
 	// 绘制Direct2D部分
 	//
-	if (m_pd2dRenderTarget != nullptr)
+	if (m_pd2dRenderTarget != nullptr && m_EnableSceneInfo)
 	{
-		m_pd2dRenderTarget->BeginDraw();
 		std::wostringstream outs;
 		outs.precision(6);
-		outs << L"FPS: " << m_Fps << L"\n"
+		outs << L"Model: " << m_ModelFileNames[m_CurrentModelIndex].c_str() << L"\n"
+			<< L"Vertices: " << m_Models[m_CurrentModelIndex].GetModelVertexCount()
+			<< L"    Faces: " << m_Models[m_CurrentModelIndex].GetModelFaceCount() << L"\n"
+			<< L"FPS: " << m_Fps << L"\n"
 			<< L"Frame Time: " << m_Mspf << L" (ms)\n";
+
 		std::wstring text = outs.str();
-		text += L"SSAO: " + (m_EnableSSAO ? std::wstring(L"ON") : std::wstring(L"OFF")) + L"\n";
-		text += L"Debug SSAO Texture: " + (m_EnableDebug ? std::wstring(L"ON") : std::wstring(L"OFF")) + L"\n";
-		text += L"Shadow: " + (m_EnableShadow ? std::wstring(L"ON") : std::wstring(L"OFF")) + L"\n";
+		std::wstring ON(L"ON"), OFF(L"OFF");
+		text += L"Shadow: " + (m_EnableShadow ? ON : OFF) + L"\n";
+		text += L"SSAO: " + (m_EnableSSAO ? ON : OFF) + L"\n";
+		static std::wstring s;
+		if (m_EnableSSAO) {
+			s = std::to_wstring(SSAOLevels[m_CurrentSSAOLevelIndex]);
+			s.resize(3);
+			text += L"SSAO Level: " + s + L"\n";
+			text += L"Blur: " + std::to_wstring(m_BlurCount) + L"\n";
+		}
+		text += L"Debug SSAO Texture: " + (m_EnableDebug ? ON : OFF) + L"\n";
+
+		m_pd2dRenderTarget->BeginDraw();
 		m_pd2dRenderTarget->DrawTextW(text.c_str(), (UINT32)text.length(), m_pTextFormat.Get(),
-			D2D1_RECT_F{ 0.0f, 0.0f, 600.0f, 200.0f }, m_pColorBrush.Get());
+			D2D1_RECT_F{ 0.0f, 0.0f, (float)m_ClientWidth, (float)m_ClientHeight }, m_pColorBrush.Get());
 		m_pd2dRenderTarget->EndDraw();
 	}
 
 	HR(m_pSwapChain->Present(0, 0));
-}
-
-void GameApp::DrawScene(BasicEffect* pBasicEffect, bool enableNormalMap)
-{
-	pBasicEffect->SetRenderDefault(m_pd3dImmediateContext.Get(), IEffect::RenderObject);
-	m_Ground.Draw(m_pd3dImmediateContext.Get(), pBasicEffect);
-
-	pBasicEffect->SetRenderDefault(m_pd3dImmediateContext.Get(), IEffect::RenderObject);
-	m_Model.Draw(m_pd3dImmediateContext.Get(), pBasicEffect);
-}
-
-void GameApp::DrawScene(ShadowEffect* pShadowEffect)
-{
-	pShadowEffect->SetRenderDefault(m_pd3dImmediateContext.Get(), IEffect::RenderObject);
-	m_Ground.Draw(m_pd3dImmediateContext.Get(), pShadowEffect);
-
-	pShadowEffect->SetRenderDefault(m_pd3dImmediateContext.Get(), IEffect::RenderObject);
-	m_Model.Draw(m_pd3dImmediateContext.Get(), pShadowEffect);
-}
-
-void GameApp::DrawScene(SSAOEffect* pSSAOEffect)
-{
-	pSSAOEffect->SetRenderNormalDepth(m_pd3dImmediateContext.Get(), IEffect::RenderObject);
-	m_Ground.Draw(m_pd3dImmediateContext.Get(), pSSAOEffect);
-
-	pSSAOEffect->SetRenderNormalDepth(m_pd3dImmediateContext.Get(), IEffect::RenderObject);
-	m_Model.Draw(m_pd3dImmediateContext.Get(), pSSAOEffect);
 }
 
 bool GameApp::InitResource()
@@ -311,7 +341,7 @@ bool GameApp::InitResource()
 
 	camera->SetViewPort(0.0f, 0.0f, (float)m_ClientWidth, (float)m_ClientHeight);
 	camera->SetFrustum(XM_PI / 3, AspectRatio(), NearZ, FarZ);
-	camera->LookTo(XMFLOAT3(0.0f, 0.0f, -10.0f), XMFLOAT3(0.0f, 0.0f, 1.0f), XMFLOAT3(0.0f, 1.0f, 0.0f));
+	camera->LookTo(XMFLOAT3(10.0f, 10.0f, -10.0f), XMFLOAT3(-1.0f, -1.0f, 1.0f), XMFLOAT3(0.0f, 1.0f, 0.0f));
 
 	// ******************
 	// 初始化阴影贴图、SSAO图和特效
@@ -337,34 +367,34 @@ bool GameApp::InitResource()
 	// ******************
 	// 初始化SSAO图
 	m_pSSAOMap = std::make_unique<SSAORender>();
-	HR(m_pSSAOMap->InitResource(m_pd3dDevice.Get(), m_ClientWidth, m_ClientHeight, XM_PI / 3, FarZ));
+	HR(m_pSSAOMap->InitResource(m_pd3dDevice.Get(), m_ClientWidth, m_ClientHeight, XM_PI / 3, FarZ, SSAOLevels[m_CurrentSSAOLevelIndex]));
+	m_pSSAOMap->SetDebugObjectName("SSAOMap_" + std::to_string(m_CurrentSSAOLevelIndex));
 
 	// ******************
 	// 初始化对象
 	//
 
-	// 地面
-	Model groundModel;
-
-	groundModel.SetMesh(m_pd3dDevice.Get(), Geometry::CreatePlane(XMFLOAT2(20.0f, 20.0f), XMFLOAT2(1.0f, 1.0f)));
-	groundModel.modelParts[0].material.ambient = XMFLOAT4(0.7f, 0.7f, 0.7f, 1.0f);
-	groundModel.modelParts[0].material.diffuse = XMFLOAT4(0.6f, 0.6f, 0.6f, 1.0f);
-	groundModel.modelParts[0].material.specular = XMFLOAT4(0.4f, 0.4f, 0.4f, 16.0f);
-	groundModel.modelParts[0].material.reflect = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
-	m_Ground.SetModel(std::move(groundModel));
-	m_Ground.GetTransform().SetPosition(0.0f, 0.0f, 0.0f);
+	GetFiles(ModelFilePath, ModelFileFormat, m_ModelFileNames);
 
 	// 模型
-	m_Importer.Import(ModelFilePath);
-	m_Model.SetModel(Model(m_pd3dDevice.Get(), m_Importer));
+	for (const auto& name : m_ModelFileNames) {
 
-	XMMATRIX S = XMMatrixScaling(0.01f, 0.01f, 0.01f);
-	BoundingBox modelBox = m_Model.GetLocalBoundingBox();
-	modelBox.Transform(modelBox, S);
-	
-	Transform& modelTransform = m_Model.GetTransform();
-	modelTransform.SetScale(0.01f, 0.01f, 0.01f);
-	modelTransform.SetPosition(0.0f, modelBox.Extents.y - modelBox.Center.y, 0.0f);
+		auto path = ModelFilePath + "\\" + name + "." + ModelFileFormat;
+
+		m_Importer.Import(path, ImportModelAsOnePart);
+		GameObject go;
+		go.SetModel(Model(m_pd3dDevice.Get(), m_Importer));
+
+		XMMATRIX S = XMMatrixScaling(0.01f, 0.01f, 0.01f);
+		BoundingBox modelBox = go.GetLocalBoundingBox();
+		modelBox.Transform(modelBox, S);
+
+		Transform& modelTransform = go.GetTransform();
+		modelTransform.SetScale(0.01f, 0.01f, 0.01f);
+		modelTransform.SetPosition(0.0f, modelBox.Extents.y - modelBox.Center.y, 0.0f);
+
+		m_Models.emplace_back(go);
+	}
 
 	// 调试用矩形
 	Model quadModel;
@@ -374,35 +404,14 @@ bool GameApp::InitResource()
 
 	// ******************
 	// 初始化光照
-	m_DirLights[0].ambient = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
-	m_DirLights[0].diffuse = XMFLOAT4(0.5f, 0.5f, 0.4f, 1.0f);
-	m_DirLights[0].specular = XMFLOAT4(0.8f, 0.8f, 0.7f, 1.0f);
-	m_DirLights[0].direction = XMFLOAT3(-0.57735f, -0.57735f, 0.57735f);
-
-	m_DirLights[1].ambient = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
-	m_DirLights[1].diffuse = XMFLOAT4(0.40f, 0.40f, 0.40f, 1.0f);
-	m_DirLights[1].specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
-	m_DirLights[1].direction = XMFLOAT3(0.707f, -0.707f, 0.0f);
-
-	m_DirLights[2].ambient = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
-	m_DirLights[2].diffuse = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
-	m_DirLights[2].specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
-	m_DirLights[2].direction = XMFLOAT3(0.0f, 0.0, -1.0f);
-
-	for (int i = 0; i < 3; ++i)
-	{
-		m_OriginalLightDirs[i] = m_DirLights[i].direction;
-		m_pBasicEffect->SetDirLight(i, m_DirLights[i]);
-	}
+	m_DirLight = DefaultLight;
+	m_OriginalLightDir = m_DirLight.direction;
+	m_pBasicEffect->SetDirLight(0, m_DirLight);
 	
 	// ******************
 	// 设置调试对象名
-	m_Ground.SetDebugObjectName("Ground");
-	m_Model.SetDebugObjectName("Model");
 	m_DebugQuad.SetDebugObjectName("DebugQuad");
 	m_pShadowMap->SetDebugObjectName("ShadowMap");
-	m_pSSAOMap->SetDebugObjectName("SSAOMap");
 
 	return true;
 }
-

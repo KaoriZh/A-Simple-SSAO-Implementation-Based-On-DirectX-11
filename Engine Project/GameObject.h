@@ -33,6 +33,9 @@ public:
 	// 获取物体变换
 	const Transform& GetTransform() const;
 
+	int GetModelVertexCount();
+	int GetModelFaceCount();
+
 	//
 	// 获取包围盒
 	//

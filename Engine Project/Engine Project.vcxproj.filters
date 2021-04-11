@@ -105,9 +105,6 @@
     <ClCompile Include="Mouse.cpp">
       <Filter>Utilities</Filter>
     </ClCompile>
-    <ClCompile Include="ObjReader.cpp">
-      <Filter>Utilities</Filter>
-    </ClCompile>
     <ClCompile Include="ScreenGrab.cpp">
       <Filter>Utilities</Filter>
     </ClCompile>
@@ -185,14 +182,14 @@
     <ClInclude Include="Mouse.h">
       <Filter>Utilities</Filter>
     </ClInclude>
-    <ClInclude Include="ObjReader.h">
-      <Filter>Utilities</Filter>
-    </ClInclude>
     <ClInclude Include="ProjectSetting.h">
       <Filter>Basic</Filter>
     </ClInclude>
     <ClInclude Include="ModelImporter.h">
       <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h">
+      <Filter>Pipeline</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

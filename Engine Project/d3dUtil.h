@@ -18,6 +18,7 @@
 #include <vector>
 #include <string>
 #include <random>
+#include <io.h>
 #include "ScreenGrab.h"
 #include "DDSTextureLoader.h"	
 #include "WICTextureLoader.h"
@@ -406,6 +407,44 @@ inline DirectX::XMMATRIX XM_CALLCONV InverseTranspose(DirectX::FXMMATRIX M)
 	A.r[3] = g_XMIdentityR3;
 
 	return XMMatrixTranspose(XMMatrixInverse(nullptr, A));
+}
+
+inline void GetFiles(const std::string& path, const std::string& exd, std::vector<std::string>& files) {
+	//文件句柄
+	intptr_t hFile = 0;
+	//文件信息
+	struct _finddata_t fileinfo;
+	std::string pathName, exdName;
+
+	if (0 != strcmp(exd.c_str(), "")) {
+		exdName = "\\*." + exd;
+	} else {
+		exdName = "\\*";
+	}
+
+	if ((hFile = _findfirst(pathName.assign(path).append(exdName).c_str(), &fileinfo)) != -1) {
+		do {
+			//如果是文件夹中仍有文件夹,迭代之
+			//如果不是,加入列表
+			// 不推荐使用，硬要使用的话，需要修改else 里面的语句
+			/*if((fileinfo.attrib &  _A_SUBDIR))
+			{
+				if(strcmp(fileinfo.name,".") != 0  &&  strcmp(fileinfo.name,"..") != 0)
+					getFiles( pathName.assign(path).append("\\").append(fileinfo.name), exd, files );
+			}
+			else */
+			{
+				if (strcmp(fileinfo.name, ".") != 0 && strcmp(fileinfo.name, "..") != 0) {
+					//files.push_back(pathName.assign(path).append("\\").append(fileinfo.name)); // 要得到绝对目录使用该语句
+					//如果使用
+					std::string name(fileinfo.name);
+					name.resize(name.size() - 4);
+					files.push_back(name); // 只要得到文件名字使用该语句
+				}
+			}
+		} while (_findnext(hFile, &fileinfo) == 0);
+		_findclose(hFile);
+	}
 }
 
 #endif

@@ -10,7 +10,7 @@ using namespace DirectX::PackedVector;
 using namespace Microsoft::WRL;
 
 
-HRESULT SSAORender::InitResource(ID3D11Device* device, int width, int height, float fovY, float farZ)
+HRESULT SSAORender::InitResource(ID3D11Device* device, int width, int height, float fovY, float farZ, float level)
 {
 	if (!device)
 	{
@@ -24,7 +24,7 @@ HRESULT SSAORender::InitResource(ID3D11Device* device, int width, int height, fl
 
 	HRESULT hr;
 	
-	hr = OnResize(device, width, height, fovY, farZ);
+	hr = OnResize(device, width, height, fovY, farZ, level);
 	if (FAILED(hr))
 		return hr;
 
@@ -38,7 +38,7 @@ HRESULT SSAORender::InitResource(ID3D11Device* device, int width, int height, fl
 	return hr;
 }
 
-HRESULT SSAORender::OnResize(ID3D11Device* device, int width, int height, float fovY, float farZ)
+HRESULT SSAORender::OnResize(ID3D11Device* device, int width, int height, float fovY, float farZ, float level)
 {
 	if (!device)
 	{
@@ -54,9 +54,9 @@ HRESULT SSAORender::OnResize(ID3D11Device* device, int width, int height, float 
 
 	m_Width = width;
 	m_Height = height;
+	m_SSAOLevel = level;
 
-	// 我们以一半的分辨率来渲染到SSAO图
-	m_AmbientMapViewPort = CD3D11_VIEWPORT(0.0f, 0.0f, width / 2.0f, height / 2.0f, 0.0f, 1.0f);
+	m_AmbientMapViewPort = CD3D11_VIEWPORT(0.0f, 0.0f, width * level, height * level, 0.0f, 1.0f);
 
 	BuildFrustumFarCorners(fovY, farZ);
 	HRESULT hr = BuildTextureViews(device, width, height);
@@ -232,10 +232,10 @@ HRESULT SSAORender::BuildTextureViews(ID3D11Device* device, int width, int heigh
 		return hr;
 
 	//
-	// 以一半的分辨率来创建SSAO图
+	// 以level创建SSAO图
 	//
-	texDesc.Width = width / 2;
-	texDesc.Height = height / 2;
+	texDesc.Width = (UINT)(width * m_SSAOLevel);
+	texDesc.Height = (UINT)(height * m_SSAOLevel);
 	texDesc.Format = DXGI_FORMAT_R16_FLOAT;
 	ComPtr<ID3D11Texture2D> ambientTex0, ambientTex1;
 	hr = device->CreateTexture2D(&texDesc, nullptr, ambientTex0.GetAddressOf());

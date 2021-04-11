@@ -19,6 +19,14 @@ const Transform& GameObject::GetTransform() const
 	return m_Transform;
 }
 
+int GameObject::GetModelVertexCount() {
+	return m_Model.totalVertexCount;
+}
+
+int GameObject::GetModelFaceCount() {
+	return m_Model.totalFaceCount;
+}
+
 BoundingBox GameObject::GetBoundingBox() const
 {
 	BoundingBox box;

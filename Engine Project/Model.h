@@ -6,40 +6,8 @@
 // model data storage.
 //***************************************************************************************
 
-#ifndef MODEL_H
-#define MODEL_H
-
-#include <DirectXCollision.h>
-#include "Effects.h"
-#include "ObjReader.h"
-#include "ModelImporter.h"
-#include "Geometry.h"
-
-struct ModelPart
-{
-	// 使用模板别名(C++11)简化类型名
-	template <class T>
-	using ComPtr = Microsoft::WRL::ComPtr<T>;
-
-	ModelPart() : material(), texDiffuse(), vertexBuffer(), indexBuffer(),
-		vertexCount(), indexCount(), indexFormat() {}
-
-	ModelPart(const ModelPart&) = default;
-	ModelPart& operator=(const ModelPart&) = default;
-
-	ModelPart(ModelPart&&) = default;
-	ModelPart& operator=(ModelPart&&) = default;
-
-
-	Material material;
-	ComPtr<ID3D11ShaderResourceView> texDiffuse;
-	ComPtr<ID3D11ShaderResourceView> texNormalMap;
-	ComPtr<ID3D11Buffer> vertexBuffer;
-	ComPtr<ID3D11Buffer> indexBuffer;
-	UINT vertexCount;
-	UINT indexCount;
-	DXGI_FORMAT indexFormat;
-};
+#pragma once
+#include "Mesh.h"
 
 struct Model
 {
@@ -48,7 +16,6 @@ struct Model
 	using ComPtr = Microsoft::WRL::ComPtr<T>;
 	
 	Model();
-	Model(ID3D11Device * device, const ObjReader& model);
 	Model(ID3D11Device* device, const ModelImporter& importer);
 	// 设置缓冲区
 	template<class VertexType, class IndexType>
@@ -64,7 +31,6 @@ struct Model
 	// 设置模型
 	//
 
-	void SetModel(ID3D11Device * device, const ObjReader& model);
 	void SetModel(ID3D11Device* device, const ModelImporter& importer);
 
 	//
@@ -87,10 +53,13 @@ struct Model
 	// 若模型被重新设置，调试对象名也需要被重新设置
 	void SetDebugObjectName(const std::string& name);
 
-	std::vector<ModelPart> modelParts;
+	std::vector<Mesh> modelParts;
 	DirectX::BoundingBox boundingBox;
 	UINT vertexStride;
+	int totalVertexCount = 0;
+	int totalFaceCount = 0;
 };
+
 
 
 
@@ -125,7 +94,3 @@ inline void Model::SetMesh(ID3D11Device * device, const std::vector<VertexType> 
 		(sizeof(IndexType) == 2 ? DXGI_FORMAT_R16_UINT : DXGI_FORMAT_R32_UINT));
 
 }
-
-
-
-#endif

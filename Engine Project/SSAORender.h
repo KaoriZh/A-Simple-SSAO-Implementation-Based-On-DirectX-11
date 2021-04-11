@@ -29,10 +29,10 @@ public:
 	SSAORender& operator=(SSAORender&&) = default;
 
 	HRESULT InitResource(ID3D11Device* device,
-		int width, int height, float fovY, float farZ);
+		int width, int height, float fovY, float farZ, float level);
 
 	HRESULT OnResize(ID3D11Device* device,
-		int width, int height, float fovY, float farZ);
+		int width, int height, float fovY, float farZ, float level);
 
 	// 开始绘制场景到法向量/深度图
 	// 缓存当前RTV、DSV和视口
@@ -71,6 +71,7 @@ private:
 private:
 	UINT m_Width = 0;
 	UINT m_Height = 0;
+	float m_SSAOLevel = 0.5f;
 
 	DirectX::XMFLOAT4 m_FrustumFarCorner[4] = {};
 
