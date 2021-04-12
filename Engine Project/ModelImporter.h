@@ -6,7 +6,7 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 #include "Vertex.h"
-#include "LightHelper.h"
+#include "Light.h"
 #include "ProjectSetting.h"
 
 class ModelImporter {

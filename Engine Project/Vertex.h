@@ -6,8 +6,7 @@
 // Defines vertex structures and input layouts.
 //***************************************************************************************
 
-#ifndef VERTEX_H
-#define VERTEX_H
+#pragma once
 
 #include <d3d11_1.h>
 #include <DirectXMath.h>
@@ -143,5 +142,3 @@ struct VertexPosNormalTangentTex
 	DirectX::XMFLOAT2 tex;
 	static const D3D11_INPUT_ELEMENT_DESC inputLayout[4];
 };
-
-#endif

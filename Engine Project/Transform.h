@@ -6,8 +6,7 @@
 // Provide 1st person(free view) and 3rd person cameras.
 //***************************************************************************************
 
-#ifndef TRANSFORM_H
-#define TRANSFORM_H
+#pragma once
 
 #include <DirectXMath.h>
 
@@ -107,7 +106,5 @@ private:
 	DirectX::XMFLOAT3 m_Rotation = {};								// 旋转欧拉角(弧度制)
 	DirectX::XMFLOAT3 m_Position = {};								// 位置
 };
-
-#endif
 
 

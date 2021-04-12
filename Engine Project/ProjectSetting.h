@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 #include "Keyboard.h"
-#include "LightHelper.h"
+#include "Light.h"
 
 namespace {
 

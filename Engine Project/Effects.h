@@ -9,7 +9,7 @@
 #pragma once
 
 #include <memory>
-#include "LightHelper.h"
+#include "Light.h"
 #include "RenderStates.h"
 
 

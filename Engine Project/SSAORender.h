@@ -5,8 +5,8 @@
 // SSAO渲染类
 // SSAO Render class.
 //***************************************************************************************
-#ifndef SSAORENDER_H
-#define SSAORENDER_H
+
+#pragma once
 
 #include <d3d11_1.h>
 #include <wrl/client.h>
@@ -101,5 +101,3 @@ private:
 	ComPtr<ID3D11RenderTargetView> m_pAmbientRTV1;
 	ComPtr<ID3D11ShaderResourceView> m_pAmbientSRV1;
 };
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef D3DAPP_H
-#define D3DAPP_H
+#pragma once
 
 #include <wrl/client.h>
 #include <string>
@@ -96,5 +95,3 @@ protected:
 	float m_Fps;
 	float m_Mspf;
 };
-
-#endif // D3DAPP_H

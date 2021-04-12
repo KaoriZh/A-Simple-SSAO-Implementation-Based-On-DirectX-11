@@ -6,13 +6,11 @@
 // Provide 1st person(free view) and 3rd person cameras.
 //***************************************************************************************
 
-#ifndef CAMERA_H
-#define CAMERA_H
+#pragma once
 
 #include <d3d11_1.h>
 #include <DirectXMath.h>
 #include "Transform.h"
-
 
 class Camera
 {
@@ -143,6 +141,3 @@ private:
 	// 最小允许距离，最大允许距离
 	float m_MinDist = 0.0f, m_MaxDist = 0.0f;
 };
-
-
-#endif

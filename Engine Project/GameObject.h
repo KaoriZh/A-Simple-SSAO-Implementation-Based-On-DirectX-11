@@ -6,8 +6,7 @@
 // Simple game object.
 //***************************************************************************************
 
-#ifndef GAMEOBJECT_H
-#define GAMEOBJECT_H
+#pragma once
 
 #include "Model.h"
 #include "Transform.h"
@@ -85,8 +84,3 @@ private:
 	ComPtr<ID3D11Buffer> m_pInstancedBuffer = nullptr;				// 实例缓冲区
 	size_t m_Capacity = 0;										    // 缓冲区容量
 };
-
-
-
-
-#endif

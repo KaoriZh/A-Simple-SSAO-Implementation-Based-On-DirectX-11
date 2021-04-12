@@ -1,7 +1,7 @@
+#include <random>
 #include "SSAORender.h"
 #include "d3dUtil.h"
 #include "Vertex.h"
-#include <random>
 
 #pragma warning(disable: 26812)
 

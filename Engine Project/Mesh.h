@@ -1,4 +1,5 @@
 #pragma once
+
 #include <DirectXCollision.h>
 #include "Effects.h"
 #include "ModelImporter.h"

@@ -6,8 +6,7 @@
 // Render-To-Texture class.
 //***************************************************************************************
 
-#ifndef TEXTURERENDER_H
-#define TEXTURERENDER_H
+#pragma once
 
 #include <d3d11_1.h>
 #include <wrl/client.h>
@@ -61,5 +60,3 @@ private:
 	bool								m_ShadowMap = false;	// 是否为阴影贴图
 
 };
-
-#endif

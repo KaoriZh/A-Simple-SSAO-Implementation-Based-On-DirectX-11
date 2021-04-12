@@ -10,8 +10,7 @@
 // 将EffectHelper.h和EffectHelper.cpp包含进项目即可使用
 // 
 
-#ifndef EFFECTHELPER_H
-#define EFFECTHELPER_H
+#pragma once
 
 //
 // 宏相关
@@ -284,7 +283,3 @@ private:
 	class Impl;
 	std::unique_ptr<Impl> pImpl;
 };
-
-
-
-#endif

@@ -146,9 +146,6 @@
     <ClInclude Include="GameObject.h">
       <Filter>Pipeline</Filter>
     </ClInclude>
-    <ClInclude Include="LightHelper.h">
-      <Filter>Pipeline</Filter>
-    </ClInclude>
     <ClInclude Include="Model.h">
       <Filter>Pipeline</Filter>
     </ClInclude>
@@ -189,6 +186,12 @@
       <Filter>Utilities</Filter>
     </ClInclude>
     <ClInclude Include="Mesh.h">
+      <Filter>Pipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="Material.h">
+      <Filter>Pipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="Light.h">
       <Filter>Pipeline</Filter>
     </ClInclude>
   </ItemGroup>

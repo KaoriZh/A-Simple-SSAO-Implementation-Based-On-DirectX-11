@@ -7,8 +7,7 @@
 // Provide encapsulated collision classes and detection method.
 //***************************************************************************************
 
-#ifndef COLLISION_H
-#define COLLISION_H
+#pragma once
 
 #include <DirectXCollision.h>
 #include <vector>
@@ -85,9 +84,3 @@ public:
 private:
 	static WireFrameData CreateFromCorners(const DirectX::XMFLOAT3(&corners)[8], const DirectX::XMFLOAT4& color);
 };
-
-
-
-
-
-#endif

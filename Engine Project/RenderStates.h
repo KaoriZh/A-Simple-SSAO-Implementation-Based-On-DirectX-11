@@ -6,8 +6,7 @@
 // Provide some render states.
 //***************************************************************************************
 
-#ifndef RENDERSTATES_H
-#define RENDERSTATES_H
+#pragma once
 
 #include <wrl/client.h>
 #include <d3d11_1.h>
@@ -50,7 +49,3 @@ public:
 	static ComPtr<ID3D11DepthStencilState> DSSNoDepthTestWithStencil;	// 深度/模板状态：关闭深度测试，对指定模板值的区域进行绘制
 	static ComPtr<ID3D11DepthStencilState> DSSNoDepthWriteWithStencil;	// 深度/模板状态：仅深度测试，不写入深度值，对指定模板值的区域进行绘制
 };
-
-
-
-#endif
