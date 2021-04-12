@@ -10,8 +10,8 @@ namespace {
 #pragma region WindowSetting
 	static const std::wstring WindowName = L"LiF Engine";
 
-	static const int WindowWidth = 800;
-	static const int WindowHeight = 600;
+	static const int WindowWidth = 1000;
+	static const int WindowHeight = 750;
 #pragma endregion
 
 #pragma region Asset

@@ -17,7 +17,7 @@ GameApp::GameApp(HINSTANCE hInstance)
 	m_EnableSceneInfo(EnableSceneInfoDefault),
 	m_EnableLightRotation(EnableLightRotationDefault),
 	m_MouseModeRelative(true),
-	m_CurrentSSAOLevelIndex(1),
+	m_CurrentSSAOLevelIndex(0),
 	m_BlurCount(0),
 	m_CurrentModelIndex(0)
 {
@@ -120,7 +120,6 @@ void GameApp::UpdateScene(float dt)
 	if (m_KeyboardTracker.IsKeyPressed(KeySSAO))
 	{
 		m_EnableSSAO = !m_EnableSSAO;
-		if (!m_EnableSSAO) m_EnableDebug = false;
 		m_pBasicEffect->SetSSAOEnabled(m_EnableSSAO);
 	}
 	// 阴影贴图开关

@@ -17,11 +17,6 @@ HRESULT SSAORender::InitResource(ID3D11Device* device, int width, int height, fl
 		return E_INVALIDARG;
 	}
 
-	// 防止重复初始化造成内存泄漏
-	m_pScreenQuadVB.Reset();
-	m_pScreenQuadIB.Reset();
-	m_pRandomVectorSRV.Reset();
-
 	HRESULT hr;
 	
 	hr = OnResize(device, width, height, fovY, farZ, level);
@@ -44,13 +39,6 @@ HRESULT SSAORender::OnResize(ID3D11Device* device, int width, int height, float 
 	{
 		return E_INVALIDARG;
 	}
-
-	// 防止重复初始化造成内存泄漏
-	m_pRandomVectorSRV.Reset();
-	m_pAmbientRTV0.Reset();
-	m_pAmbientRTV1.Reset();
-	m_pAmbientSRV0.Reset();
-	m_pAmbientSRV1.Reset();
 
 	m_Width = width;
 	m_Height = height;
@@ -212,7 +200,6 @@ void SSAORender::BuildOffsetVectors()
 
 HRESULT SSAORender::BuildTextureViews(ID3D11Device* device, int width, int height)
 {
-
 	CD3D11_TEXTURE2D_DESC texDesc(DXGI_FORMAT_R16G16B16A16_FLOAT, width, height,
 		1, 1, D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET);
 
@@ -220,14 +207,14 @@ HRESULT SSAORender::BuildTextureViews(ID3D11Device* device, int width, int heigh
 	// 创建法向量/深度纹理及对应的SRV与RTV
 	//
 	ComPtr<ID3D11Texture2D> normalDepthTex;
-	HRESULT hr = device->CreateTexture2D(&texDesc, nullptr, normalDepthTex.GetAddressOf());
+	HRESULT hr = device->CreateTexture2D(&texDesc, nullptr, normalDepthTex.ReleaseAndGetAddressOf());
 	if (FAILED(hr))
 		return hr;
 	// 传nullptr创建默认视图以访问完整资源
-	hr = device->CreateShaderResourceView(normalDepthTex.Get(), nullptr, m_pNormalDepthSRV.GetAddressOf());
+	hr = device->CreateShaderResourceView(normalDepthTex.Get(), nullptr, m_pNormalDepthSRV.ReleaseAndGetAddressOf());
 	if (FAILED(hr))
 		return hr;
-	hr = device->CreateRenderTargetView(normalDepthTex.Get(), nullptr, m_pNormalDepthRTV.GetAddressOf());
+	hr = device->CreateRenderTargetView(normalDepthTex.Get(), nullptr, m_pNormalDepthRTV.ReleaseAndGetAddressOf());
 	if (FAILED(hr))
 		return hr;
 
@@ -238,23 +225,23 @@ HRESULT SSAORender::BuildTextureViews(ID3D11Device* device, int width, int heigh
 	texDesc.Height = (UINT)(height * m_SSAOLevel);
 	texDesc.Format = DXGI_FORMAT_R16_FLOAT;
 	ComPtr<ID3D11Texture2D> ambientTex0, ambientTex1;
-	hr = device->CreateTexture2D(&texDesc, nullptr, ambientTex0.GetAddressOf());
+	hr = device->CreateTexture2D(&texDesc, nullptr, ambientTex0.ReleaseAndGetAddressOf());
 	if (FAILED(hr))
 		return hr;
-	hr = device->CreateShaderResourceView(ambientTex0.Get(), nullptr, m_pAmbientSRV0.GetAddressOf());
+	hr = device->CreateShaderResourceView(ambientTex0.Get(), nullptr, m_pAmbientSRV0.ReleaseAndGetAddressOf());
 	if (FAILED(hr))
 		return hr;
-	hr = device->CreateRenderTargetView(ambientTex0.Get(), nullptr, m_pAmbientRTV0.GetAddressOf());
+	hr = device->CreateRenderTargetView(ambientTex0.Get(), nullptr, m_pAmbientRTV0.ReleaseAndGetAddressOf());
 	if (FAILED(hr))
 		return hr;
 
-	hr = device->CreateTexture2D(&texDesc, nullptr, ambientTex1.GetAddressOf());
+	hr = device->CreateTexture2D(&texDesc, nullptr, ambientTex1.ReleaseAndGetAddressOf());
 	if (FAILED(hr))
 		return hr;
-	hr = device->CreateShaderResourceView(ambientTex1.Get(), nullptr, m_pAmbientSRV1.GetAddressOf());
+	hr = device->CreateShaderResourceView(ambientTex1.Get(), nullptr, m_pAmbientSRV1.ReleaseAndGetAddressOf());
 	if (FAILED(hr))
 		return hr;
-	hr = device->CreateRenderTargetView(ambientTex1.Get(), nullptr, m_pAmbientRTV1.GetAddressOf());
+	hr = device->CreateRenderTargetView(ambientTex1.Get(), nullptr, m_pAmbientRTV1.ReleaseAndGetAddressOf());
 
 	return hr;
 }
@@ -280,7 +267,7 @@ HRESULT SSAORender::BuildFullScreenQuad(ID3D11Device* device)
 	v[2].tex = XMFLOAT2(1.0f, 0.0f);
 	v[3].tex = XMFLOAT2(1.0f, 1.0f);
 
-	HRESULT hr = CreateVertexBuffer(device, v, sizeof v, m_pScreenQuadVB.GetAddressOf());
+	HRESULT hr = CreateVertexBuffer(device, v, sizeof v, m_pScreenQuadVB.ReleaseAndGetAddressOf());
 
 	// 创建索引缓冲区
 	DWORD indices[6] = {
@@ -288,7 +275,7 @@ HRESULT SSAORender::BuildFullScreenQuad(ID3D11Device* device)
 		0, 2, 3
 	};
 
-	hr = CreateIndexBuffer(device, indices, sizeof indices, m_pScreenQuadIB.GetAddressOf());
+	hr = CreateIndexBuffer(device, indices, sizeof indices, m_pScreenQuadIB.ReleaseAndGetAddressOf());
 	return hr;
 }
 
@@ -313,11 +300,11 @@ HRESULT SSAORender::BuildRandomVectorTexture(ID3D11Device* device)
 
 	HRESULT hr;
 	ComPtr<ID3D11Texture2D> tex;
-	hr = device->CreateTexture2D(&texDesc, &initData, tex.GetAddressOf());
+	hr = device->CreateTexture2D(&texDesc, &initData, tex.ReleaseAndGetAddressOf());
 	if (FAILED(hr))
 		return hr;
 
-	hr = device->CreateShaderResourceView(tex.Get(), nullptr, m_pRandomVectorSRV.GetAddressOf());
+	hr = device->CreateShaderResourceView(tex.Get(), nullptr, m_pRandomVectorSRV.ReleaseAndGetAddressOf());
 	return hr;
 }
 
