@@ -164,14 +164,17 @@ void GameApp::UpdateScene(float dt)
 	// 自由摄像机的操作
 	
 	// 方向移动
+	auto speed = dt * CameraSpeed;
+	if (keyState.IsKeyDown(KeySpeedControl))
+		speed *= SpeedFactor;
 	if (keyState.IsKeyDown(KeyUp))
-		cam1st->MoveForward(dt * CameraSpeed);
+		cam1st->MoveForward(speed);
 	if (keyState.IsKeyDown(KeyDown))
-		cam1st->MoveForward(dt * -CameraSpeed);
+		cam1st->MoveForward(-speed);
 	if (keyState.IsKeyDown(KeyLeft))
-		cam1st->Strafe(dt * -CameraSpeed);
+		cam1st->Strafe(-speed);
 	if (keyState.IsKeyDown(KeyRight))
-		cam1st->Strafe(dt * CameraSpeed);
+		cam1st->Strafe(speed);
 
 	// 更新鼠标事件，获取相对偏移量
 	Mouse::State mouseState = m_pMouse->GetState();
@@ -181,8 +184,14 @@ void GameApp::UpdateScene(float dt)
 	// 在鼠标没进入窗口前仍为ABSOLUTE模式
 	if (mouseState.positionMode == Mouse::MODE_RELATIVE)
 	{
-		cam1st->Pitch(mouseState.y * dt * 1.25f);
-		cam1st->RotateY(mouseState.x * dt * 1.25f);
+		auto speedx = mouseState.x * dt * 1.25f,
+			speedy = mouseState.y * dt * 1.25f;
+		if (keyState.IsKeyDown(KeySpeedControl)) {
+			speedx *= SpeedFactor;
+			speedy *= SpeedFactor;
+		}
+		cam1st->Pitch(speedy);
+		cam1st->RotateY(speedx);
 	}
 
 	m_pBasicEffect->SetTextureUsed(EnableTextureUsed);

@@ -36,6 +36,7 @@ namespace {
 	static const bool EnableTextureUsed = false;
 
 	static const float CameraSpeed = 6.0f; // velocity
+	static const float SpeedFactor = 0.1f; // when "KeySpeedControl" is pressed, speed will be multipled by this factor
 
 	static const DirectionalLight DefaultLight = {
 		DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),			// ambient
@@ -57,6 +58,7 @@ namespace {
 	static const DirectX::Keyboard::Keys KeyDown = DirectX::Keyboard::Keys::S;
 	static const DirectX::Keyboard::Keys KeyLeft = DirectX::Keyboard::Keys::A;
 	static const DirectX::Keyboard::Keys KeyRight = DirectX::Keyboard::Keys::D;
+	static const DirectX::Keyboard::Keys KeySpeedControl = DirectX::Keyboard::Keys::LeftControl;
 
 	static const DirectX::Keyboard::Keys KeyDebug = DirectX::Keyboard::Keys::Q;
 	static const DirectX::Keyboard::Keys KeySSAO = DirectX::Keyboard::Keys::E;
