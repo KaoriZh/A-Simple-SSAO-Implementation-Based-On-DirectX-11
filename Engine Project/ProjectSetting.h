@@ -8,25 +8,25 @@
 namespace {
 
 #pragma region WindowSetting
-	static const std::wstring WindowName = L"LiF Engine";
+	static const std::wstring WindowName = L"LiF Engine"; // Window Title
 
 	static const int WindowWidth = 1000;
 	static const int WindowHeight = 750;
 #pragma endregion
 
 #pragma region Asset
-	static const std::string ModelFilePath = "Asset\\Model";
-	static const std::string ModelFileFormat = "obj";
+	static const std::string ModelFilePath = "Asset\\Model"; // Model's file path, relative to .vcxproj
+	static const std::string ModelFileFormat = "obj"; // all file with format "ModelFileFormat" will be imported
 	
 	static const bool ImportModelAsOnePart = true; // if true, the whole scene can be rendered in ONE draw call, but in one DEFAULT material without textures.
 #pragma endregion
 
 #pragma region RenderSetting
-	static const float NearZ = 1.0f;
-	static const float FarZ = 5000.0f;
+	static const float NearZ = 1.0f; // frustum near plane z
+	static const float FarZ = 5000.0f; // frustum far plane z
 
-	static const std::vector<float> SSAOLevels = { 0.5f, 1.0f, 2.0f, 4.0f };
-	static const int MaxBlurCount = 8;
+	static const std::vector<float> SSAOLevels = { 0.5f, 1.0f, 2.0f, 4.0f }; // ssao texture scaling relative to window size
+	static const int MaxBlurCount = 8; // maximum ssao blur allowed
 
 	static const bool EnableShadowDefault = false;
 	static const bool EnableSSAODefault = false;
@@ -35,7 +35,7 @@ namespace {
 	static const bool EnableLightRotationDefault = false;
 	static const bool EnableTextureUsed = false;
 
-	static const float CameraSpeed = 6.0f;
+	static const float CameraSpeed = 6.0f; // velocity
 
 	static const DirectionalLight DefaultLight = {
 		DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),			// ambient
